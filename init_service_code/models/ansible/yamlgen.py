@@ -33,8 +33,10 @@ class BlockBuilder:
 
         items = []
 
+        def genPrint(value):
+            return value if isinstance(value, int) or isinstance(value, float) else '''"%s"''' % value
         def genValueStr(value):
-            return value if isinstance(value, list) else value
+            return "\n" + "\r".join(list(map(lambda n:"    - %s" % genPrint(n), value))) if isinstance(value, list) and not isinstance(value, str) else genPrint(value)
         
         def add(key, value):
             if key == "name" and value != name:
