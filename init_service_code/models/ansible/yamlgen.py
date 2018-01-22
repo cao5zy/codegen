@@ -10,3 +10,12 @@ class YamlGenModel:
 
 
 # model definition
+
+# gen code for service
+def genRoleFolder(parentPath, yamlGenModel):
+    import util
+    def gen(serviceName):
+        return util.createFolder(serviceName, parentPath)
+    
+    return (list(map(lambda service: gen(service.name), yamlGenModel.services)), yamlGenModel)
+    

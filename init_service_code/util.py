@@ -12,6 +12,8 @@ def createFolder(folderName, parentPath = None):
     
     os.makedirs(p)
 
+    return p
+
 def removeFolder(folderName):
 
     if os.path.exists(folderName):
