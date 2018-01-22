@@ -99,3 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+test_deploy
+test_env
+test_node_image
