@@ -24,4 +24,10 @@ def genRoleFolder_test():
         easyrun.run("rm cd -rf")
 
 
+def BlockBuilder_test():
+    from models.ansible.yamlgen import BlockBuilder
     
+    builder = BlockBuilder("service1", "docker_container")
+    result = builder.add("name", "service1").add("ports", [8080]).gen()
+
+    print(result)
