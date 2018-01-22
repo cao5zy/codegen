@@ -37,6 +37,9 @@ class BlockBuilder:
             return value if isinstance(value, list) else value
         
         def add(key, value):
+            if key == "name" and value != name:
+                raise ValueError("value of %s should be equal to %s if key is name" % (value, name))
+            
             items.append((key, genValueStr(value)))
             return self
         
