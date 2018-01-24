@@ -1,0 +1,99 @@
+{
+logServer: "logsvr",
+logServerPort: 3232,
+services:[
+  {
+    param: {
+      deploy_path: "Test_Project_Deploy_Path"
+    },
+    port: {
+      host: 8000,
+      container: 8089
+    },
+    config:{
+      interval: 33,
+      timeout: 50
+    },
+    deployConfig: {
+       name: "Test_Project" ,
+       image: "md-app",
+       image_tag: "1.0",
+       volumes: [{host: "{{ deploy_path }}", container: "/app"}],
+       restart: "yes",
+       recreate: "yes",
+       state: "started",
+       entrypoint: "node index.js"
+    },
+    interface:{
+      name: "Auth",
+      methods:[{
+        name: "authenticate",
+	params:[{
+	  name: "username",
+	  type: "string",
+	  isUrlFilter: "True",
+	  defaultVal: "authenticate"
+	},
+	{
+	  name: "password",
+	  type: "string"
+	}]
+      },
+      {
+        name:"method1",
+	params:[{name:"role",
+	"type":"string",
+	isUrlFilter: "True",
+	defaultVal:"method1"}]
+      }]
+    },
+    dependedServers:[
+      {
+        name: "interface_service",
+	localName: "int_service",
+	type: "service"
+      },
+      {
+        name: "logsvr",
+	localName: "logsvr1",
+	type: "logserver"
+      }
+      ]
+  },
+  {
+    port:{
+      host: 8088,
+      container: 8088
+    },
+    deployConfig: {
+       name: "interface_service" ,
+       image: "md-app",
+       image_tag: "1.0",
+       volumes: [{host: "/var/", container: "/app"}],
+       ports: [ {host: 8322, container: 8322}],
+       restart: "yes",
+       recreate: "yes",
+       state: "started",
+       entrypoint: "node index.js"
+    }
+  },
+  {
+    port: {
+      host: 8322,
+      container: 8322
+    },
+    deployConfig: {
+       name: "logsvr" ,
+       image: "md-app",
+       image_tag: "1.0",
+       volumes: [{host: "/var/", container: "/app"}],
+       ports: [ {host: 8322, container: 8322}],
+       restart: "yes",
+       recreate: "yes",
+       state: "started",
+       entrypoint: "node index.js"
+
+    }
+  }
+]
+}

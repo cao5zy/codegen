@@ -1,0 +1,9 @@
+[{name: "seneca@^3.3.0", option: "--save"},
+ {name: "async@^2.4.1", option: "--save"},
+ {name: "config@^1.26.1", option: "--save"},
+ {name: "log4js@^1.1.1", option: "--save"},
+ {name: "mongo-client-connect@^1.0.6", option: "--save"},
+ {name: "mongodb@^2.2.26", option: "--save"},
+ {name: "chai@^4.0.2", option: "--save-dev"},
+ {name: "jasmine-node@^1.14.5", option: "--save-dev"}
+]
