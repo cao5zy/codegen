@@ -40,5 +40,17 @@ def BlockBuilder_test():
         print(result.output)
     finally:
         easyrun.run('rm %s' % path)
-    
+
+def genTaskMain_test():
+    parentPath = "./"
+    from models.ansible.yamlgen import genTaskMain
+
+    filePath = genTaskMain(parentPath, )
+
+    try:
+        result = easyrun.run('yamllint %s' % filePath)
+        assert_that(result.retcode).is_equal_to(0)
+        print(result.output)
+    finally:
+        pass
     

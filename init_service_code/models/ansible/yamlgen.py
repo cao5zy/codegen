@@ -3,7 +3,7 @@
 
 class YamlGenModel:
     class Service:
-        def __init__(self, name = "", entrypoint = "", image = "", recreate = False, restart = False, ports = [], volumes = []):
+        def __init__(self, name = None, entrypoint = None, image = None, recreate = None, restart = None, ports = None, volumes = None):
             self.name = name # key of service, it would be mapped to the deployconfig.name
             self.entrypoint = entrypoint
             self.image = image
@@ -57,12 +57,13 @@ class BlockBuilder:
 
 
 def genTaskMain(parentPath, service):
-
-    template = '''---
-- name: deploy {{ name }} service
-  docker_container:
-    
-
-...
-'''
-    
+    import os
+    def genItems(builder):
+        [builder.add((key, service[key])) for key in service.__dic__ if service[key] != None]
+        return builder
+                        
+    def genDockerScript():
+        return (lambda builder:builder.gen())(DockerBuilder("%s docker container" % service.deployConfig.name, "docker_container"))
+    util.writeContent(os.path.join(parentPath, "main.yaml"), "---%s%s%s..." % (os.linesep, \
+                                                                               genDockerScript(), \
+                                                                               os.linesep))
