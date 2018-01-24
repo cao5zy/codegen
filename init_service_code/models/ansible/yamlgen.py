@@ -28,30 +28,27 @@ def genRoleFolder(parentPath, yamlGenModel):
 
 class BlockBuilder:
     
-    def __init__(self, name, ansible_module):
+    def __init__(self, desc, ansible_module):
         from jinja2 import Template
-
+        import os
+        
         items = []
 
         def genPrint(value):
-            return value if isinstance(value, int) or isinstance(value, float) else '''"%s"''' % value
+            return " %s" % value if isinstance(value, int) or isinstance(value, float) else ''' "%s"''' % value
         def genValueStr(value):
-            return "\n" + "\r".join(list(map(lambda n:"    - %s" % genPrint(n), value))) if isinstance(value, list) and not isinstance(value, str) else genPrint(value)
+            return os.linesep + os.linesep.join(list(map(lambda n:"      -%s" % genPrint(n), value))) if isinstance(value, list) and not isinstance(value, str) else genPrint(value)
         
         def add(key, value):
-            if key == "name" and value != name:
-                raise ValueError("value of %s should be equal to %s if key is name" % (value, name))
-            
             items.append((key, genValueStr(value)))
             return self
         
         def gen():
-            return Template('''- name: build {{ name}} container
+            return Template('''- name: {{ desc }}
   {{ ansible_module }}:
 
-''').render(name = name, ansible_module = ansible_module) \
-        + Template('''{% for (key, value) in items %} 
-    {{ key }}: {{ value }}
+''').render(desc = desc, ansible_module = ansible_module) \
+        + Template('''{% for (key, value) in items %}    {{ key }}:{{ value }}
 {% endfor %}
 ''').render(items = items)
 

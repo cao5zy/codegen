@@ -1,6 +1,9 @@
 from models.ansible.yamlgen import YamlGenModel
 from assertpy import assert_that
+import util
+import easyrun
 
+    
 def genTestModel():
     genModel = YamlGenModel()
     genModel.services.append(YamlGenModel.Service(name = "ab"))
@@ -13,7 +16,6 @@ def YamlGenModel_test():
 
 def genRoleFolder_test():
     from models.ansible.yamlgen import genRoleFolder
-    import easyrun
     try:
         genModel = genTestModel()
         result = genRoleFolder(".", genModel)
@@ -29,5 +31,14 @@ def BlockBuilder_test():
     
     builder = BlockBuilder("service1", "docker_container")
     result = builder.add("name", "service1").add("ports", [8080]).gen()
+    path = "./temp.yaml"
+    util.writeContent(path, "---\n" + result)
 
-    print(result)
+    try:
+        result = easyrun.run('yamllint %s' % path)
+        assert_that(result.retcode).is_equal_to(0)
+        print(result.output)
+    finally:
+        easyrun.run('rm %s' % path)
+    
+    
