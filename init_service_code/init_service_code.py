@@ -34,7 +34,8 @@ def main():
     (lambda rootPath, allServiceProjects:(lambda x,y:x)(generateServices(rootPath, allServiceProjects), generateRootAnsible(rootPath, allServiceProjects)))\
         (env.runningPath(), list(map(lambda n:ServiceProject(n), getServices())))
     
-
+    from models.ansible.yamlgen import genRoot, convertToModel
+    genRoot(env.runningPath(), convertToModel(getServices()))
     
     return 0
 

@@ -12,13 +12,17 @@ class YamlGenModel:
             self.ports = ports
             self.volumes = volumes
             
-    def __init__(self):
-        self.services = []
+    def __init__(self, services = []):
+        self.services = services
 
 
 # model definition
 def convertToModel(json):
-    pass
+    def genService(serviceJson):
+        print(serviceJson)
+        return YamlGenModel.Service( name = serviceJson["deployConfig"]["name"], \
+                                     entrypoint = serviceJson["deployConfig"]["entrypoint"] if "entryoint" in serviceJson["deployConfig"] else None)
+    return YamlGenModel([genService(serviceJson) for serviceJson in json])
 
 def genAnsibleConfig(parentPath, yamlGenModel):
     pass
