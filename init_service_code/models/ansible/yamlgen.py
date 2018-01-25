@@ -35,18 +35,30 @@ def genAnsibleConfig(parentPath, yamlGenModel):
 def genHosts(parentPath, yamlGenModel):
     pass
 
+def genTaskFolder(rolePath):
+    import util
+    print(rolePath)
+    print(rolePath[0])
+    return util.createFolder("tasks", rolePath)
+
 def genRoot(parentPath, yamlGenModel):
     genAnsibleConfig(parentPath, yamlGenModel)
     genHosts(parentPath, yamlGenModel)
-    genRoleFolder(parentPath, yamlGenModel)
+    [genTaskMain(genTaskFolder(result[0]), result[1]) for result in genRoleFolder(parentPath, yamlGenModel)]
     
 # gen code for service
 def genRoleFolder(parentPath, yamlGenModel):
     import util
-    def gen(serviceName):
-        return util.createFolder(serviceName, parentPath)
-    
-    return (list(map(lambda service: gen(service.name), yamlGenModel.services)), yamlGenModel)
+    def genRolesFolder():
+        return util.createFolder("roles", parentPath)
+
+    def genContent(rolesFolder):
+        def gen(serviceName):
+            return util.createFolder(serviceName, rolesFolder)
+
+        return list(map(lambda service: (gen(service.name), service), yamlGenModel.services))
+
+    return genContent(genRolesFolder())
 
 class BlockBuilder:
     
