@@ -18,11 +18,16 @@ class YamlGenModel:
 
 # model definition
 def convertToModel(json):
-    def genService(serviceJson):
-        print(serviceJson)
-        return YamlGenModel.Service( name = serviceJson["deployConfig"]["name"], \
-                                     entrypoint = serviceJson["deployConfig"]["entrypoint"] if "entryoint" in serviceJson["deployConfig"] else None)
-    return YamlGenModel([genService(serviceJson) for serviceJson in json])
+    def genService(deployJson):
+        return YamlGenModel.Service( name = deployJson["name"], \
+                                     entrypoint = deployJson["entrypoint"] if "entryoint" in deployJson else None, \
+                                     image = "%s:%s" % (deployJson["image"], deployJson["image_tag"]), \
+                                     ports = [deployJson["port"]], \
+                                     recreate = deployJson["recreate"], \
+                                     restart = deployJson["restart"], \
+                                     volumes = list(map(lambda n:n["container"], deployJson["volumes"])) if "volumes" in deployJson else None \
+        )
+    return YamlGenModel([genService(serviceJson["deployConfig"]) for serviceJson in json])
 
 def genAnsibleConfig(parentPath, yamlGenModel):
     pass

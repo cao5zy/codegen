@@ -60,3 +60,4 @@ def convertToModel_test():
     result = convertToModel(json)
 
     assert_that(result.services[0].name).is_equal_to("edgesvr2")
+    assert_that(len(result.services[0].volumes)).is_equal_to(1)
