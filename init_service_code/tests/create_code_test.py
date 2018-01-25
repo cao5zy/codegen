@@ -1,4 +1,4 @@
-import easyrun
+from Runner import Run
 import unittest
 import util
 import project
@@ -28,7 +28,7 @@ class Create_code_test(unittest.TestCase):
 
 
         try:
-             easyrun.run("mkdir %s" % parentPath)
+             Run.command("mkdir %s" % parentPath)
              result, unittestsFolderPath = project.createSubFolder(parentPath, unittestsFolderName)
 
              assert_that(os.path.exists(unittestsFolderPath)).is_equal_to(True)
@@ -36,7 +36,7 @@ class Create_code_test(unittest.TestCase):
             assert_that(True).is_equal_to(False)
 
         finally:
-            easyrun.run("rm %s -rf" % parentPath)
+            Run.command("rm %s -rf" % parentPath)
 
     def testCreateEmptyFile(self):
         parentPath = _folderName

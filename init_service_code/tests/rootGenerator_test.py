@@ -1,6 +1,6 @@
 from models.ansible.rootGenerator import getEntriesFromFile, getIncludes
 from assertpy import assert_that
-import easyrun
+from Runner import Run
 
 def test_getEntriesFromFile():
     easyrun.run('mkdir test_folder')
@@ -15,15 +15,15 @@ def test_getEntriesFromFile():
     
 
 def test_getIncludes():
-    easyrun.run('mkdir test_folder')
-    easyrun.run('echo "hello {{ name1 }}" >> test_folder/test.yml')
-    easyrun.run('touch test_folder/test.txt')
+    Run.command('mkdir test_folder')
+    Run.command('echo "hello {{ name1 }}" >> test_folder/test.yml')
+    Run.command('touch test_folder/test.txt')
 
     result = getIncludes("test_folder")
     print(result)
     assert_that(result).is_length(1).contains("test.yml")
     
-    easyrun.run("rm test_folder -rf")
+    Run.command("rm test_folder -rf")
 
 
     

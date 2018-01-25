@@ -1,6 +1,6 @@
 import os
 import npm
-import easyrun
+from Runner import Run
 from assertpy import assert_that, contents_of
 import util
 
@@ -9,14 +9,14 @@ def test_applyTemplate():
     target = "template.target"
     obj = {"name": "alan"}
     
-    easyrun.run('echo "hello {{ name }}" >> %s' % templatefile)
+    Run.command('echo "hello {{ name }}" >> %s' % templatefile)
     util.applyTemplate(templatefile, target, obj)
 
     contents = contents_of(target)
     assert_that(contents).contains("hello alan")
     
-    easyrun.run('rm %s' % templatefile)
-    easyrun.run('rm %s' % target)
+    Run.command('rm %s' % templatefile)
+    Run.command('rm %s' % target)
     # targetPath has the content
 
 def test_installpackageByConfig():
@@ -26,7 +26,7 @@ def test_installpackageByConfig():
     folder = "testfolder"
     target = "%s/package.json" % folder
 
-    easyrun.run('mkdir %s' % folder)
+    Run.command('mkdir %s' % folder)
     
     util.applyTemplate(template, target, { "name": "test service" })
 
@@ -35,11 +35,11 @@ def test_installpackageByConfig():
     assert_that('%s/node_modules' % folder).exists()
     assert_that('%s/node_modules' % folder).is_directory()
     
-    easyrun.run('rm %s/ -rf' % folder)
+    Run.command('rm %s/ -rf' % folder)
 
 def test_getPackageNames():
     datafile = "datafile"
-    easyrun.run('''echo "[{\"name\":\\"seneca\\", \"option\":\\"--save\\"}]" >> %s'''% datafile)
+    Run.command('''echo "[{\"name\":\\"seneca\\", \"option\":\\"--save\\"}]" >> %s'''% datafile)
     data = npm.getPackageNames(datafile)
     assert_that(data).is_not_none()
     assert_that(data).is_type_of(list)
@@ -47,4 +47,5 @@ def test_getPackageNames():
     assert_that(data[0]).contains_entry({"name":"seneca"})
     assert_that(data[0]).contains_entry({"option":"--save"})
 
-    easyrun.run("rm %s" % datafile)
+    Run.command("rm %s" % datafile)
+
