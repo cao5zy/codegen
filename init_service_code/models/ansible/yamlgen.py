@@ -58,12 +58,13 @@ class BlockBuilder:
 
 def genTaskMain(parentPath, service):
     import os
+    import util
     def genItems(builder):
-        [builder.add((key, service[key])) for key in service.__dic__ if service[key] != None]
+        [builder.add(key, service.__dict__[key]) for key in service.__dict__ if service.__dict__[key] != None]
         return builder
                         
     def genDockerScript():
-        return (lambda builder:builder.gen())(DockerBuilder("%s docker container" % service.deployConfig.name, "docker_container"))
+        return (lambda builder:genItems(builder).gen())(BlockBuilder("%s docker container" % service.name, "docker_container"))
     util.writeContent(os.path.join(parentPath, "main.yaml"), "---%s%s%s..." % (os.linesep, \
                                                                                genDockerScript(), \
                                                                                os.linesep))

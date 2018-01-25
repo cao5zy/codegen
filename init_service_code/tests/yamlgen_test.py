@@ -2,7 +2,7 @@ from models.ansible.yamlgen import YamlGenModel
 from assertpy import assert_that
 import util
 import easyrun
-
+from Runner import Run
     
 def genTestModel():
     genModel = YamlGenModel()
@@ -19,11 +19,11 @@ def genRoleFolder_test():
     try:
         genModel = genTestModel()
         result = genRoleFolder(".", genModel)
-        assert_that(easyrun.run("ls ab").retcode).is_equal_to(0)
-        assert_that(easyrun.run("ls cd").retcode).is_equal_to(0)
+        assert_that(bool(Run.command("ls ab"))).is_equal_to(True)
+        assert_that(bool(Run.command("ls cd"))).is_equal_to(True)
     finally:
-        easyrun.run("rm ab -rf")
-        easyrun.run("rm cd -rf")
+        Run.command("rm ab -rf")
+        Run.command("rm cd -rf")
 
 
 def BlockBuilder_test():
@@ -35,22 +35,22 @@ def BlockBuilder_test():
     util.writeContent(path, "---\n" + result)
 
     try:
-        result = easyrun.run('yamllint %s' % path)
-        assert_that(result.retcode).is_equal_to(0)
-        print(result.output)
+        result = Run.command('yamllint %s' % path)
+        assert_that(bool(result)).is_equal_to(True)
+        print(result.stdout)
     finally:
-        easyrun.run('rm %s' % path)
+        Run.command('rm %s' % path)
 
 def genTaskMain_test():
     parentPath = "./"
     from models.ansible.yamlgen import genTaskMain
 
-    filePath = genTaskMain(parentPath, )
+    filePath = genTaskMain(parentPath, YamlGenModel.Service(name="test_service"))
 
     try:
-        result = easyrun.run('yamllint %s' % filePath)
-        assert_that(result.retcode).is_equal_to(0)
-        print(result.output)
+        result = Run.command('yamllint %s' % filePath)
+        assert_that(bool(result)).is_equal_to(True)
+        print(result.stdout)
     finally:
         pass
     
