@@ -35,7 +35,7 @@ class DeployConfigGenerator:
         def gen():
             def getVolumes():
                 def volumes():
-                    return map(lambda volume: '- "{{ %s }}:%s"'% (getVolumeDest(), volume["container"]),  deployConfig.volumes)
+                    return list(map(lambda volume: '- "{{ %s }}:%s"'% (getVolumeDest(), volume["container"]),  deployConfig.volumes))
 
                 return None if not hasVolumeDefined()else ["volumes:"] + volumes()
 
@@ -48,7 +48,7 @@ class DeployConfigGenerator:
 
             def getLinks():
                 def links():
-                    return map(lambda n: '- "%s:%s"' % (n["host"], n["container"]), deployConfig.links)
+                    return list(map(lambda n: '- "%s:%s"' % (n["host"], n["container"]), deployConfig.links))
 
                 return None if deployConfig.links == None else ["links:"] + links()
 
@@ -65,7 +65,6 @@ class DeployConfigGenerator:
             }
 
 
-
             indent = "  "
             content = Template('''
 ---
@@ -77,14 +76,13 @@ class DeployConfigGenerator:
 ...''').render(copyScript = copyScript(), \
                           containerName = deployConfig.name, \
                           indent = indent, \
-                          spec = "\n".join(map(lambda n:indent * 2 + n, \
+                          spec = "\n".join(list(map(lambda n:indent * 2 + n, \
                                                flattener.flatten(\
-                                                                 filter(lambda n:n != None,\
+                                                                 list(filter(lambda n:n != None,\
                                                                         map(lambda key:dic[key](), dic.keys())
-                                                                 )
+                                                                 ))
                                                )
-                          )
-                          )
+                          )))
     )
 
             return content

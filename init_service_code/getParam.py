@@ -3,7 +3,6 @@ import os
 import sys
 import getopt
 import demjson
-from cache import LruCache
 from models.deployConfig import DeployConfig
 
 def getConfig():
@@ -24,7 +23,6 @@ def getParam(name):
 def getServices():
     return Param(getConfig()).services
 
-@LruCache(maxsize=10, timeout=10)
 def getJson(file):
     return demjson.decode_file(file)
     

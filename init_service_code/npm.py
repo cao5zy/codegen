@@ -1,6 +1,6 @@
 import os
 import util
-import easyrun
+from Runner import Run
 import demjson
 import sys
 
@@ -9,7 +9,7 @@ def install(folderPath, name):
 name: the name of the project
 '''
     createPackagefile(folderPath, name)
-    installpackageByConfig(folderPath, getPackageNames(os.path.join(sys.path[0], 'npm.install.json')))
+#    installpackageByConfig(folderPath, getPackageNames(os.path.join(sys.path[0], 'npm.install.json')))
 
 def createPackagefile(folderPath, name):
     util.applyTemplate(os.path.join(sys.path[0], 'templates/package.json.template'), os.path.join(folderPath, 'package.json'), { "name": name })
@@ -26,4 +26,4 @@ def installpackageByConfig(folderPath, packageNames):
     for el in packageNames:
         cmds.append('npm install %s %s' %(el["name"], el["option"]))
 
-    easyrun.run(';'.join(cmds))
+    Run.command(';'.join(cmds))

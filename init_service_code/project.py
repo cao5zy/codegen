@@ -43,7 +43,7 @@ def createAnsibleFolder(path, deployConfig, serviceProject):
     result, dependencyScript = createEmptyFile(folderPath, "dependencies.yml")
     util.writeContent(dependencyScript, DependencyGenerator(serviceProject.getJson()).gen())
 
-    (lambda content, (result, filePath):util.writeContent(filePath, content))\
+    (lambda content, re:util.writeContent(re[1], content))\
         (RootGenerator(deployConfig.name, folderPath).gen(), createEmptyFile(folderPath, "run.yml"))
 
 
@@ -66,7 +66,7 @@ def createAppFolder(path,appName,  serviceProject, allServiceProjects):
     result, configModulePath = createEmptyFile(folderPath, "conf.js")
     util.writeContent(configModulePath, ConfigModuleGenerator(serviceProject, allServiceProjects).gen())
 
-    (lambda (result, path):util.writeContent(path, ProxyGenerator(serviceProject).gen()))(createEmptyFile(folderPath, "proxy.js"))
+    (lambda re:util.writeContent(re[1], ProxyGenerator(serviceProject).gen()))(createEmptyFile(folderPath, "proxy.js"))
     
     # add the log file and configuration    
 #    log.init(sys.path[0], folderPath, appName, getParam("logserver"), getParam("logserver-port"))

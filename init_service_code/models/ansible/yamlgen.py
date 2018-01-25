@@ -17,7 +17,20 @@ class YamlGenModel:
 
 
 # model definition
+def convertToModel(json):
+    pass
 
+def genAnsibleConfig(parentPath, yamlGenModel):
+    pass
+
+def genHosts(parentPath, yamlGenModel):
+    pass
+
+def genRoot(parentPath, yamlGenModel):
+    genAnsibleConfig(parentPath, yamlGenModel)
+    genHosts(parentPath, yamlGenModel)
+    genRoleFolder(parentPath, yamlGenModel)
+    
 # gen code for service
 def genRoleFolder(parentPath, yamlGenModel):
     import util

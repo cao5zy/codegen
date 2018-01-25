@@ -27,7 +27,7 @@ def main():
                 return 1
 
     def generateRootAnsible(rootPath, allServiceProjects):
-        (lambda content, (result, filePath):util.writeContent(filePath, content))\
+        (lambda content, re:util.writeContent(re[1], content))\
             (AllGenerator(rootPath, allServiceProjects).gen(), util.createEmptyFile(rootPath, "root.yml"))
 
 

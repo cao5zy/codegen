@@ -1,7 +1,6 @@
 from models.ansible.yamlgen import YamlGenModel
 from assertpy import assert_that
 import util
-import easyrun
 from Runner import Run
     
 def genTestModel():

@@ -6,7 +6,7 @@ import util
 
 def listFiles(folderPath):
     def handleFile(handle):
-        return flattener.flatten(map(lambda (root, dirs, files):handle(root, filter(lambda file:file.endswith(".yml"),files)), os.walk(folderPath)))
+        return flattener.flatten(list(map(lambda re:handle(re[0], filter(lambda file:file.endswith(".yml"),re[2])), os.walk(folderPath))))
 
     return handleFile
 
@@ -19,8 +19,8 @@ def getIncludes(folderPath):
     return listFiles(folderPath)(lambda root, files:files)
 
 def getEntries(folderPath):
-    return list(set(flattener.flatten(map(lambda file:populateSourcePath({'file': file, 'entries':getEntriesFromFile(file)})["entries"], \
-                         listFiles(folderPath)(lambda root, files:map(lambda file: os.path.join(root, file), files))))))
+    return list(set(flattener.flatten(list(map(lambda file:populateSourcePath({'file': file, 'entries':getEntriesFromFile(file)})["entries"], \
+                         listFiles(folderPath)(lambda root, files:list(map(lambda file: os.path.join(root, file), files))))))))
 
 def populateSourcePath(fileEntries):
     def handleSource(entry):
