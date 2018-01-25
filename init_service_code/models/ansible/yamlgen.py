@@ -65,6 +65,6 @@ def genTaskMain(parentPath, service):
                         
     def genDockerScript():
         return (lambda builder:genItems(builder).gen())(BlockBuilder("%s docker container" % service.name, "docker_container"))
-    util.writeContent(os.path.join(parentPath, "main.yaml"), "---%s%s%s..." % (os.linesep, \
+    return util.writeContent(os.path.join(parentPath, "main.yaml"), "---%s%s%s...%s" % (os.linesep, \
                                                                                genDockerScript(), \
-                                                                               os.linesep))
+                                                                                        os.linesep, os.linesep))

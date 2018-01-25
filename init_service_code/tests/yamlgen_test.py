@@ -52,5 +52,5 @@ def genTaskMain_test():
         assert_that(bool(result)).is_equal_to(True)
         print(result.stdout)
     finally:
-        pass
+        assert_that(bool(Run.command('rm %s' % filePath))).is_equal_to(True)
     

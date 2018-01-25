@@ -29,6 +29,8 @@ def writeContent(path, content):
     with open(path, 'w') as file:
         file.write(content)
 
+    return path
+
 def applyTemplate(templatePath, targetPath, dataObj):
     template = Template(readContent(templatePath))
     writeContent(targetPath, template.render(dataObj))
