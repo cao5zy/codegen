@@ -1,7 +1,7 @@
 #!bin/python
 from getParam import Param
-import easyrun
 from assertpy import assert_that
+import shellrun
 
 def test_getParam():
     configfile = '''{
@@ -14,7 +14,8 @@ def test_getParam():
     }]
 } '''
     testConfigFile = "test_config.json"
-    easyrun.run('echo "%s" >> %s' % (configfile, testConfigFile))
+    print('test_getParam')
+    shellrun.run('echo "%s" >> %s' % (configfile, testConfigFile))
 
     try:
         param = Param(testConfigFile)
@@ -23,7 +24,7 @@ def test_getParam():
         assert_that(param.getParam('logServerPort')).is_equal_to(3232)
 
     finally:
-        easyrun.run('rm %s' % testConfigFile)
+        shellrun.run('rm %s' % testConfigFile)
     
 
     
