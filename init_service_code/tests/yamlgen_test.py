@@ -61,3 +61,13 @@ def convertToModel_test():
 
     assert_that(result.services[0].name).is_equal_to("edgesvr2")
     assert_that(len(result.services[0].volumes)).is_equal_to(1)
+
+def ConfigBuilder_test():
+    from models.ansible.yamlgen import ConfigBuilder
+
+    result = ConfigBuilder() \
+    .addSection("defaults") \
+    .addKeyValue("inventory", "hosts") \
+    .gen()
+    assert_that(result).contains("inventory=hosts")
+

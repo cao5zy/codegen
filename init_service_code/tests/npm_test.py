@@ -19,26 +19,26 @@ def test_applyTemplate():
     shellrun.run('rm %s' % target)
     # targetPath has the content
 
-def test_installpackageByConfig():
-    print('test installpackageByConfig')
+# def test_installpackageByConfig():
+#     print('test installpackageByConfig')
     
-    template = "templates/package.json.template"
-    folder = "testfolder"
-    target = "%s/package.json" % folder
+#     template = "templates/package.json.template"
+#     folder = "testfolder"
+#     target = "%s/package.json" % folder
 
-    try:
-        shellrun.run('mkdir %s' % folder)
+#     try:
+#         shellrun.run('mkdir %s' % folder)
     
-        util.applyTemplate(template, target, { "name": "test service" })
+#         util.applyTemplate(template, target, { "name": "test service" })
 
-        npm.installpackageByConfig('%s/%s' % (os.getcwd(), folder), [{ "name": "seneca", "option":"--save"}])
+#         npm.installpackageByConfig('%s/%s' % (os.getcwd(), folder), [{ "name": "seneca", "option":"--save"}])
 
-        assert_that('%s/node_modules' % folder).exists()
-        assert_that('%s/node_modules' % folder).is_directory()
+#         assert_that('%s/node_modules' % folder).exists()
+#         assert_that('%s/node_modules' % folder).is_directory()
 
-        pass
-    finally:
-        shellrun.run('rm %s/ -rf' % folder)
+#         pass
+#     finally:
+#         shellrun.run('rm %s/ -rf' % folder)
         
     
 

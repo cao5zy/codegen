@@ -30,7 +30,12 @@ def convertToModel(json):
     return YamlGenModel([genService(serviceJson["deployConfig"]) for serviceJson in json])
 
 def genAnsibleConfig(parentPath, yamlGenModel):
-    pass
+    import util
+    import os
+    util.writeContent(os.path.join(parentPath, "ansible.cfg"), ConfigBuilder().addSection("defaults") \
+                      .addKeyValue("inventory", "hosts") \
+                      .gen())
+                            
 
 def genHosts(parentPath, yamlGenModel):
     pass
@@ -43,9 +48,12 @@ def genTaskFolder(rolePath):
 
 def genRoot(parentPath, yamlGenModel):
     import util
-    genAnsibleConfig(parentPath, yamlGenModel)
-    genHosts(parentPath, yamlGenModel)
-    (lambda ansibleFolder:[genTaskMain(genTaskFolder(result[0]), result[1]) for result in genRoleFolder(ansibleFolder, yamlGenModel)])(util.createFolder("ansible", parentPath))
+    def gen(ansibleFolder):
+        genAnsibleConfig(ansibleFolder, yamlGenModel)
+        genHosts(parentPath, yamlGenModel)
+        [genTaskMain(genTaskFolder(result[0]), result[1]) for result in genRoleFolder(ansibleFolder, yamlGenModel)]
+
+    gen(util.createFolder("ansible", parentPath))
     
 # gen code for service
 def genRoleFolder(parentPath, yamlGenModel):
@@ -90,7 +98,27 @@ class BlockBuilder:
         self.add = add
         self.gen = gen
 
+class ConfigBuilder:
+    def __init__(self):
+        from jinja2 import Template
+        items = []
+        
+        def addSection(name):
+            items.append("[%s]" % name)
+            return self
+        
+        def addKeyValue(key, value):
+            items.append("%s=%s" % (key, value))
+            return self
+        
+        def gen():
+            return Template('''{% for item in items %}{{ item }}
+{% endfor %}''').render(items = items)
 
+        self.addSection = addSection
+        self.addKeyValue = addKeyValue
+        self.gen = gen
+        
 def genTaskMain(parentPath, service):
     import os
     import util
