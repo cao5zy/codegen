@@ -1,6 +1,6 @@
 import os
 import npm
-from Runner import Run
+import shellrun
 from assertpy import assert_that, contents_of
 import util
 
@@ -9,14 +9,14 @@ def test_applyTemplate():
     target = "template.target"
     obj = {"name": "alan"}
     
-    Run.command('echo "hello {{ name }}" >> %s' % templatefile)
+    shellrun.run('echo "hello {{ name }}" >> %s' % templatefile)
     util.applyTemplate(templatefile, target, obj)
 
     contents = contents_of(target)
     assert_that(contents).contains("hello alan")
     
-    Run.command('rm %s' % templatefile)
-    Run.command('rm %s' % target)
+    shellrun.run('rm %s' % templatefile)
+    shellrun.run('rm %s' % target)
     # targetPath has the content
 
 def test_installpackageByConfig():
@@ -26,20 +26,25 @@ def test_installpackageByConfig():
     folder = "testfolder"
     target = "%s/package.json" % folder
 
-    Run.command('mkdir %s' % folder)
+    try:
+        shellrun.run('mkdir %s' % folder)
     
-    util.applyTemplate(template, target, { "name": "test service" })
+        util.applyTemplate(template, target, { "name": "test service" })
 
-    npm.installpackageByConfig('%s/%s' % (os.getcwd(), folder), [{ "name": "seneca", "option":"--save"}])
+        npm.installpackageByConfig('%s/%s' % (os.getcwd(), folder), [{ "name": "seneca", "option":"--save"}])
 
-    assert_that('%s/node_modules' % folder).exists()
-    assert_that('%s/node_modules' % folder).is_directory()
+        assert_that('%s/node_modules' % folder).exists()
+        assert_that('%s/node_modules' % folder).is_directory()
+
+        pass
+    finally:
+        shellrun.run('rm %s/ -rf' % folder)
+        
     
-    Run.command('rm %s/ -rf' % folder)
 
 def test_getPackageNames():
     datafile = "datafile"
-    Run.command('''echo "[{\"name\":\\"seneca\\", \"option\":\\"--save\\"}]" >> %s'''% datafile)
+    shellrun.run('''echo "[{\"name\":\\"seneca\\", \"option\":\\"--save\\"}]" >> %s'''% datafile)
     data = npm.getPackageNames(datafile)
     assert_that(data).is_not_none()
     assert_that(data).is_type_of(list)
@@ -47,5 +52,5 @@ def test_getPackageNames():
     assert_that(data[0]).contains_entry({"name":"seneca"})
     assert_that(data[0]).contains_entry({"option":"--save"})
 
-    Run.command("rm %s" % datafile)
+    shellrun.run("rm %s" % datafile)
 

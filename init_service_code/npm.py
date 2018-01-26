@@ -1,6 +1,6 @@
 import os
 import util
-from Runner import Run
+import shellrun
 import demjson
 import sys
 
@@ -26,4 +26,4 @@ def installpackageByConfig(folderPath, packageNames):
     for el in packageNames:
         cmds.append('npm install %s %s' %(el["name"], el["option"]))
 
-    Run.command(';'.join(cmds))
+    shellrun.run(';'.join(cmds))
