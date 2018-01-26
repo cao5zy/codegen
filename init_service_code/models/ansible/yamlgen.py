@@ -36,9 +36,12 @@ def genAnsibleConfig(parentPath, yamlGenModel):
                       .addKeyValue("inventory", "hosts") \
                       .gen())
                             
-
 def genHosts(parentPath, yamlGenModel):
-    pass
+    import util
+    import os
+    util.writeContent(os.path.join(parentPath, "hosts"), ConfigBuilder().addSection("local") \
+                      .addKey("localhost") \
+                      .gen())
 
 def genTaskFolder(rolePath):
     import util
@@ -50,7 +53,7 @@ def genRoot(parentPath, yamlGenModel):
     import util
     def gen(ansibleFolder):
         genAnsibleConfig(ansibleFolder, yamlGenModel)
-        genHosts(parentPath, yamlGenModel)
+        genHosts(ansibleFolder, yamlGenModel)
         [genTaskMain(genTaskFolder(result[0]), result[1]) for result in genRoleFolder(ansibleFolder, yamlGenModel)]
 
     gen(util.createFolder("ansible", parentPath))
@@ -106,7 +109,11 @@ class ConfigBuilder:
         def addSection(name):
             items.append("[%s]" % name)
             return self
-        
+
+        def addKey(name):
+            items.append(name)
+            return self
+            
         def addKeyValue(key, value):
             items.append("%s=%s" % (key, value))
             return self
@@ -117,6 +124,7 @@ class ConfigBuilder:
 
         self.addSection = addSection
         self.addKeyValue = addKeyValue
+        self.addKey = addKey
         self.gen = gen
         
 def genTaskMain(parentPath, service):
