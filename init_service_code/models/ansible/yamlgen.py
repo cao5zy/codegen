@@ -54,11 +54,23 @@ def genRoot(parentPath, yamlGenModel):
     def gen(ansibleFolder):
         genAnsibleConfig(ansibleFolder, yamlGenModel)
         genHosts(ansibleFolder, yamlGenModel)
+        genEntry(ansibleFolder, yamlGenModel)
         [genTaskMain(genTaskFolder(result[0]), result[1]) for result in genRoleFolder(ansibleFolder, yamlGenModel)]
 
     gen(util.createFolder("ansible", parentPath))
     
 # gen code for service
+def genEntry(ansibleFolder, yamlGenModel):
+    import os
+    import util
+    util.writeContent(os.path.join(ansibleFolder, "hosts"), \
+        "---%s%s%s...%s" % (os.linesep, BlockBuilder() \
+        .addTitle("hosts", "local") \
+        .add("roles", list(map(lambda service:service.name, yamlGenModel.services))) \
+        .gen() \
+                        , os.linesep, os.linesep))
+    
+
 def genRoleFolder(parentPath, yamlGenModel):
     import util
     def genRolesFolder():
@@ -74,33 +86,39 @@ def genRoleFolder(parentPath, yamlGenModel):
 
 class BlockBuilder:
     
-    def __init__(self, desc, ansible_module):
+    def __init__(self, defaultIndent = 0):
         from jinja2 import Template
         import os
-        
+        indent = 0
+        space = '  '
         items = []
 
         def genPrint(value):
-            return " %s" % value if isinstance(value, int) or isinstance(value, float) else ''' "%s"''' % value
-        def genValueStr(value):
-            return os.linesep + os.linesep.join(list(map(lambda n:"      -%s" % genPrint(n), value))) if isinstance(value, list) and not isinstance(value, str) else genPrint(value)
-        
-        def add(key, value):
-            items.append((key, genValueStr(value)))
-            return self
-        
-        def gen():
-            return Template('''- name: {{ desc }}
-  {{ ansible_module }}:
+            return '' if value == None else " %s" % value if isinstance(value, int) or isinstance(value, float) else ''' "%s"''' % value
 
-''').render(desc = desc, ansible_module = ansible_module) \
-        + Template('''{% for (key, value) in items %}    {{ key }}:{{ value }}
+        def add(key, value = None, level = 1):
+            if isinstance(value, list) and not isinstance(value, str):
+                items.append("%s%s:" % ((defaultIndent + level) * space, key))
+                [items.append("%s-%s" % ( (defaultIndent + level + 1) * space, genPrint(val))) for val in value]
+            else:
+                items.append("%s%s:%s" % ((defaultIndent + level) * space, key, genPrint(value)))
+
+            return self
+
+        def addTitle(key, value):
+            items.append("%s- %s: %s" % (defaultIndent * space, key, value))
+
+            return self
+            
+        def gen():
+            return Template('''{% for item in items %}{{ item }}
 {% endfor %}
 ''').render(items = items)
 
         self.add = add
         self.gen = gen
-
+        self.addTitle = addTitle
+        
 class ConfigBuilder:
     def __init__(self):
         from jinja2 import Template
@@ -131,11 +149,11 @@ def genTaskMain(parentPath, service):
     import os
     import util
     def genItems(builder):
-        [builder.add(key, service.__dict__[key]) for key in service.__dict__ if service.__dict__[key] != None]
+        [builder.add(key, service.__dict__[key], 2) for key in service.__dict__ if service.__dict__[key] != None]
         return builder
                         
     def genDockerScript():
-        return (lambda builder:genItems(builder).gen())(BlockBuilder("%s docker container" % service.name, "docker_container"))
+        return (lambda builder:genItems(builder).gen())(BlockBuilder().addTitle("name", "%s docker container" % service.name).add("docker_container"))
     return util.writeContent(os.path.join(parentPath, "main.yaml"), "---%s%s%s...%s" % (os.linesep, \
                                                                                genDockerScript(), \
                                                                                         os.linesep, os.linesep))

@@ -27,16 +27,17 @@ def genRoleFolder_test():
 
 def BlockBuilder_test():
     from models.ansible.yamlgen import BlockBuilder
+    import shellrun
     
-    builder = BlockBuilder("service1", "docker_container")
-    result = builder.add("name", "service1").add("ports", [8080]).gen()
+    builder = BlockBuilder().addTitle("name", "deploy service1").add("docker_container")
+    result = builder.add("name", "service1", 2).add("ports", [8080], 2).gen()
     path = "./temp.yaml"
     util.writeContent(path, "---\n" + result)
 
     try:
-        result = Run.command('yamllint %s' % path)
-        assert_that(bool(result)).is_equal_to(True)
-        print(result.stdout)
+        result = shellrun.run('yamllint %s' % path)
+        assert_that(result.retcode).is_equal_to(0)
+        print(result.output)
     finally:
         Run.command('rm %s' % path)
 
