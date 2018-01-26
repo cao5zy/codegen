@@ -63,7 +63,7 @@ def genRoot(parentPath, yamlGenModel):
 def genEntry(ansibleFolder, yamlGenModel):
     import os
     import util
-    util.writeContent(os.path.join(ansibleFolder, "hosts"), \
+    util.writeContent(os.path.join(ansibleFolder, "site.yaml"), \
         "---%s%s%s...%s" % (os.linesep, BlockBuilder() \
         .addTitle("hosts", "local") \
         .add("roles", list(map(lambda service:service.name, yamlGenModel.services))) \
