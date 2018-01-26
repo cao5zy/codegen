@@ -42,9 +42,10 @@ def genTaskFolder(rolePath):
     return util.createFolder("tasks", rolePath)
 
 def genRoot(parentPath, yamlGenModel):
+    import util
     genAnsibleConfig(parentPath, yamlGenModel)
     genHosts(parentPath, yamlGenModel)
-    [genTaskMain(genTaskFolder(result[0]), result[1]) for result in genRoleFolder(parentPath, yamlGenModel)]
+    (lambda ansibleFolder:[genTaskMain(genTaskFolder(result[0]), result[1]) for result in genRoleFolder(ansibleFolder, yamlGenModel)])(util.createFolder("ansible", parentPath))
     
 # gen code for service
 def genRoleFolder(parentPath, yamlGenModel):
