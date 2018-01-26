@@ -11,6 +11,6 @@ def test_configModuleGenerator():
     assert_that(content).contains('''int_serviceHost: config.get("int_serviceHost"),''')
     assert_that(content).contains('''int_servicePort: config.get("int_servicePort"),''')
     assert_that(content).contains('''port: config.get("port"),''')
-    assert_that(content).contains('''interval: config.get("interval"),''')
+    assert_that(content).contains('''interval: config.get("interval")''')
     assert_that(content).contains('''timeout: config.get("timeout")''')
 
