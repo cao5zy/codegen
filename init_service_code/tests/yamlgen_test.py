@@ -57,12 +57,14 @@ def genTaskMain_test():
 def convertToModel_test():
     import demjson
     from models.ansible.yamlgen import convertToModel
-    json = demjson.decode("[{'deployConfig': {'image_tag': '1.0', 'volume': '/working', 'description': null, 'entrypoint': 'node index.js', '_id': '5a446071f521b50001971f98', 'image': 'alancao/node_server_image', 'port': 8082, 'name': 'edgesvr2', 'restart': false, 'instanceType': 'microService', 'target': null, 'volumes': [{'container': '/working'}], 'awsSetting': null, 'recreate': false}}]")
+    json = demjson.decode("[{'deployConfig': {'image_tag': '1.0', 'volume': '/working', 'description': null, 'entrypoint': 'node index.js', '_id': '5a446071f521b50001971f98', 'image': 'alancao/node_server_image', 'port': 8082, 'name': 'edgesvr2', 'restart': false, 'instanceType': 'microService', 'target': null, 'volumes': [{'container': '/working'}], 'awsSetting': null, 'recreate': false}, 'dependedServers':[{'name': 'interface_service'}]}]")
     result = convertToModel(json, "./")
 
     assert_that(result.services[0].name).is_equal_to("edgesvr2")
     assert_that(len(result.services[0].volumes)).is_equal_to(1)
-
+    assert_that(result.relations[0].name).is_equal_to("edgesvr2")
+    assert_that(result.relations[0].depend).is_equal_to("interface_service")
+    
 def ConfigBuilder_test():
     from models.ansible.yamlgen import ConfigBuilder
 

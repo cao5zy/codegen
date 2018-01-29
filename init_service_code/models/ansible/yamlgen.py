@@ -10,9 +10,15 @@ class YamlGenModel:
             self.restart = restart
             self.ports = ports
             self.volumes = volumes
+
+    class Relation:
+        def __init__(self, name = None, depend = None):
+            self.name = name
+            self.depend = depend
             
-    def __init__(self, services = []):
+    def __init__(self, services = [], relations = []):
         self.services = services
+        self.relations = relations
 
 
 # model definition
@@ -29,7 +35,16 @@ def convertToModel(json, rootFolder):
                                      restart = deployJson["restart"], \
                                      volumes = list(map(lambda n:genVolume(n["container"]), deployJson["volumes"])) if "volumes" in deployJson else None \
         )
-    return YamlGenModel([genService(serviceJson["deployConfig"]) for serviceJson in json])
+
+    def genRelation(serviceJson):
+        def gen():
+            return [YamlGenModel.Relation( name = serviceJson["deployConfig"]["name"], depend = item["name"]) for item in serviceJson["dependedServers"]]
+        
+        return [] if not "dependedServers" in serviceJson else gen()
+
+    import flattener
+
+    return YamlGenModel([genService(serviceJson["deployConfig"]) for serviceJson in json], flattener.flatten([genRelation(serviceJson) for serviceJson in json]))
 
 def genAnsibleConfig(parentPath, yamlGenModel):
     import util
