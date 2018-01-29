@@ -1,4 +1,3 @@
-
 # model definition
 
 class YamlGenModel:
@@ -37,6 +36,9 @@ def genAnsibleConfig(parentPath, yamlGenModel):
     import os
     util.writeContent(os.path.join(parentPath, "ansible.cfg"), ConfigBuilder().addSection("defaults") \
                       .addKeyValue("inventory", "hosts") \
+                      .addSection("privilege_escalation") \
+                      .addKeyValue("become", "True") \
+                      .addKeyValue("become_method", "sudo") \
                       .gen())
                             
 def genHosts(parentPath, yamlGenModel):
@@ -52,23 +54,23 @@ def genTaskFolder(rolePath):
     print(rolePath[0])
     return util.createFolder("tasks", rolePath)
 
-def genRoot(parentPath, yamlGenModel):
+def genRoot(parentPath, yamlGenModel, isDebug):
     import util
     def gen(ansibleFolder):
         genAnsibleConfig(ansibleFolder, yamlGenModel)
         genHosts(ansibleFolder, yamlGenModel)
-        genEntry(ansibleFolder, yamlGenModel)
+        genEntry(ansibleFolder, yamlGenModel, isDebug)
         [genTaskMain(genTaskFolder(result[0]), result[1]) for result in genRoleFolder(ansibleFolder, yamlGenModel)]
 
     gen(util.createFolder("ansible", parentPath))
     
 # gen code for service
-def genEntry(ansibleFolder, yamlGenModel):
+def genEntry(ansibleFolder, yamlGenModel, isDebug):
     import os
     import util
     util.writeContent(os.path.join(ansibleFolder, "site.yaml"), \
         "---%s%s%s...%s" % (os.linesep, BlockBuilder() \
-        .addTitle("hosts", "local") \
+        .addTitle("hosts", "localhost" if isDebug else "") \
         .add("roles", list(map(lambda service:service.name, yamlGenModel.services))) \
         .gen() \
                         , os.linesep, os.linesep))
