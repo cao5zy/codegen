@@ -8,7 +8,7 @@ from models.deployConfig import DeployConfig
 def getConfig():
     return os.path.join(os.getcwd(), "md.config")
 
-def getParam(name):
+def getParam(name, default = None):
     configfile = getConfig()
 
     param = Param(configfile)
@@ -18,7 +18,7 @@ def getParam(name):
         "logserver-port": param.getParam('logServerPort')
     }
 
-    return dic[name]
+    return dic[name] if name in dic else default
 
 def getServices():
     return Param(getConfig()).services

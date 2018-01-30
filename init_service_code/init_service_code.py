@@ -14,6 +14,12 @@ import util
 
 logging.basicConfig(filename="log.txt", filemode="w", level=logging.DEBUG)
 
+def getparam(name, default = None):
+    import getopt
+    options, args = getopt.getopt(sys.argv[1:], "", ["isdebug="])
+    return (lambda result: result[0][1] if len(result) > 0 else default) \
+        ([opt for opt in options if opt[0] == '--%s' % name])
+
 def main():
     def generateServices(rootPath, allServiceProjects):
         for serviceProject in allServiceProjects:
@@ -33,9 +39,9 @@ def main():
 
     (lambda rootPath, allServiceProjects:(lambda x,y:x)(generateServices(rootPath, allServiceProjects), generateRootAnsible(rootPath, allServiceProjects)))\
         (env.runningPath(), list(map(lambda n:ServiceProject(n), getServices())))
-    
+
     from models.ansible.yamlgen import genRoot, convertToModel, ConvertOption
-    (lambda isDebug:genRoot(env.runningPath(), convertToModel(getServices(), ConvertOption(isDebug = True, rootFolder = env.runningPath()))))(True)
+    (lambda isDebug:genRoot(env.runningPath(), convertToModel(getServices(), ConvertOption(isDebug = getparam('isdebug', 'true').lower() == 'true', rootFolder = env.runningPath()))))(True)
     
     return 0
 
