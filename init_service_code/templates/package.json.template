@@ -6,6 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "dependencies":{
+{% for dependency in dependencies %}    {{ dependency }}{% if not loop.last%},{% endif %}
+{% endfor %}
+  },
   "author": "",
   "license": "ISC"
 }
