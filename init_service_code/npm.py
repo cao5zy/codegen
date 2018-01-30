@@ -20,6 +20,7 @@ def getPackageNames(filename):
         .map(lambda n: n["name"].split("@"))
             .map(lambda n: [ '"%s"' % n[0], '"%s"' % n[1]])
             .map(lambda n: ":".join(n))
+            .to_list()
     )
 
 def installpackageByConfig(folderPath, packageNames):

@@ -56,9 +56,9 @@ def genTaskMain_test():
     
 def convertToModel_test():
     import demjson
-    from models.ansible.yamlgen import convertToModel
+    from models.ansible.yamlgen import convertToModel, ConvertOption
     json = demjson.decode("[{'deployConfig': {'image_tag': '1.0', 'volume': '/working', 'description': null, 'entrypoint': 'node index.js', '_id': '5a446071f521b50001971f98', 'image': 'alancao/node_server_image', 'port': 8082, 'name': 'edgesvr2', 'restart': false, 'instanceType': 'microService', 'target': null, 'volumes': [{'container': '/working'}], 'awsSetting': null, 'recreate': false}, 'dependedServers':[{'name': 'interface_service'}]}]")
-    result = convertToModel(json, "./")
+    result = convertToModel(json,  ConvertOption(isDebug = True, rootFolder = "./"))
 
     assert_that(result.services[0].name).is_equal_to("edgesvr2")
     assert_that(len(result.services[0].volumes)).is_equal_to(1)

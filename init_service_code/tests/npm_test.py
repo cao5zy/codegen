@@ -44,13 +44,14 @@ def test_applyTemplate():
 
 def test_getPackageNames():
     datafile = "datafile"
-    shellrun.run('''echo "[{\"name\":\\"seneca\\", \"option\":\\"--save\\"}]" >> %s'''% datafile)
-    data = npm.getPackageNames(datafile)
-    assert_that(data).is_not_none()
-    assert_that(data).is_type_of(list)
-    assert_that(data).is_length(1)
-    assert_that(data[0]).contains_entry({"name":"seneca"})
-    assert_that(data[0]).contains_entry({"option":"--save"})
-
-    shellrun.run("rm %s" % datafile)
+    shellrun.run('''echo "[{\"name\":\\"seneca@1.0\\", \"option\":\\"--save\\"}]" >> %s'''% datafile)
+    try:
+        
+        data = npm.getPackageNames(datafile)
+        assert_that(data).is_not_none()
+        assert_that(data).is_type_of(list)
+        assert_that(data).is_length(1)
+        assert_that(data[0]).is_equal_to('"seneca":"1.0"')
+    finally:
+        shellrun.run("rm %s" % datafile)
 
