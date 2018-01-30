@@ -65,8 +65,6 @@ def genHosts(parentPath, yamlGenModel):
 
 def genTaskFolder(rolePath):
     import util
-    print(rolePath)
-    print(rolePath[0])
     return util.createFolder("tasks", rolePath)
 
     
@@ -106,10 +104,6 @@ def sortServicesByDependency(services, relations):
 
     def removeKeys(result, objs):
         def removekey(obj):
-            print('result')
-            print(result)
-            print('objs')
-            print(objs)
             obj["dependencies"] = list(key for key in obj["dependencies"] if key not in result)
             return obj
     
@@ -144,7 +138,7 @@ def genRoleFolder(parentPath, yamlGenModel):
         def gen(serviceName):
             return util.createFolder(serviceName, rolesFolder)
 
-        return list(map(lambda service: (gen(service.name), service), yamlGenModel.services))
+        return list(map(lambda service: (gen(service.name), service), sortServicesByDependency(yamlGenModel.services, yamlGenModel.relations)))
 
     return genContent(genRolesFolder())
 
