@@ -64,7 +64,7 @@ def convertToModel(json, convertoption):
         return YamlGenModel.Service( name = deployJson["name"], \
                                      entrypoint = deployJson["entrypoint"] if "entrypoint" in deployJson else None, \
                                      image = "%s:%s" % (deployJson["image"], deployJson["image_tag"]), \
-                                     ports = [deployJson["port"]], \
+                                     ports = ['%s:%s' % (deployJson["port"], deployJson["port"])] if convertoption.isdebug else deployJson["port"], \
                                      recreate = deployJson["recreate"], \
                                      restart = deployJson["restart"], \
                                      volumes = list(map(lambda n:genVolume(n["container"]), deployJson["volumes"])) if "volumes" in deployJson else None \
