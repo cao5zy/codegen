@@ -74,3 +74,21 @@ def ConfigBuilder_test():
     .gen()
     assert_that(result).contains("inventory=hosts")
 
+
+def sortServiceByDependency_test():
+    from models.ansible.yamlgen import sortServicesByDependency
+    
+    services = []
+    services.append(YamlGenModel.Service(name = "a"))
+    services.append(YamlGenModel.Service(name = "aa"))
+    services.append(YamlGenModel.Service(name = "b"))
+    services.append(YamlGenModel.Service(name = "cc"))
+
+    relations = []
+    relations.append(YamlGenModel.Relation(name = "a", depend = "aa"))
+    relations.append(YamlGenModel.Relation(name = "cc", depend = "b"))
+
+    updatedServices = sortServicesByDependency(services, relations)
+
+    assert_that(updatedServices[0].name).is_equal_to("aa")
+    assert_that(updatedServices[3].name).is_equal_to("cc")

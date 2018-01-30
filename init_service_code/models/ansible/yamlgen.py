@@ -69,6 +69,7 @@ def genTaskFolder(rolePath):
     print(rolePath[0])
     return util.createFolder("tasks", rolePath)
 
+    
 def genRoot(parentPath, yamlGenModel, isDebug):
     import util
     def gen(ansibleFolder):
@@ -89,7 +90,50 @@ def genEntry(ansibleFolder, yamlGenModel, isDebug):
         .add("roles", list(map(lambda service:service.name, yamlGenModel.services))) \
         .gen() \
                         , os.linesep, os.linesep))
+
+def sortServicesByDependency(services, relations):
+    class entry:
+        def __init__(self, name, dependencies):
+            self.name = name
+            self.dependencies = dependencies
+    def putEmptyToResult(result, objs):
+        for obj in filter(lambda obj:obj["dependencies"] == None or (type(obj["dependencies"]) == list and len(obj["dependencies"]) == 0), objs):
+            result.append(obj["project"])
+        return result
+
+    def clearEmptyKeys(result, objs):
+        return list(filter(lambda obj:obj["dependencies"] != None and type(obj["dependencies"]) == list and len(obj["dependencies"]) > 0, objs))
+
+    def removeKeys(result, objs):
+        def removekey(obj):
+            print('result')
+            print(result)
+            print('objs')
+            print(objs)
+            obj["dependencies"] = list(key for key in obj["dependencies"] if key not in result)
+            return obj
     
+        return list(map(lambda obj:removekey(obj), objs))
+    
+    
+    def sortByDependency(result, objs):
+        return result if len(objs) == 0 else sortByDependency(result, \
+            removeKeys(result, clearEmptyKeys(putEmptyToResult(result, objs), objs)))
+
+    def completeEntries(entries):
+        import flattener
+        [entries.append({"project": n, "dependencies": []}) \
+         for n in flattener.flatten(list(map(lambda x:x["dependencies"], entries))) \
+             if len(list(filter(lambda x:x["project"] == n, entries))) == 0]
+
+        return entries
+    
+    def genEntries():
+        from itertools import groupby
+        return [{"project": item[0], "dependencies": list(map(lambda n:n.depend, item[1]))} for item in groupby(relations, lambda x:x.name)]
+
+    return list(map(lambda name:list(filter(lambda n:n.name == name, services))[0], sortByDependency([], completeEntries(genEntries()))))
+
 
 def genRoleFolder(parentPath, yamlGenModel):
     import util
