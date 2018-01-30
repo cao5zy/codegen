@@ -92,3 +92,17 @@ def sortServiceByDependency_test():
 
     assert_that(updatedServices[0].name).is_equal_to("aa")
     assert_that(updatedServices[3].name).is_equal_to("cc")
+
+def genLinks_test():
+    from models.ansible.yamlgen import genLinks
+    from functional import seq
+    
+    yamlModel = YamlGenModel([YamlGenModel.Service(name = "a"), \
+                              YamlGenModel.Service(name = "b"), \
+                              YamlGenModel.Service(name = "c")], [
+                                  YamlGenModel.Relation(name = "a", depend = "c"), \
+                                  YamlGenModel.Relation(name = "c", depend = "b") \
+                              ])
+    result = genLinks(yamlModel)
+    assert_that(list(filter(lambda n:n.name == 'a', result.services))[0].links).contains("c")
+    assert_that(seq(result.services).filter(lambda n:n.name == 'c')[0].links).contains("b")
