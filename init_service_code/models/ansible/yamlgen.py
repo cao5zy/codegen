@@ -1,10 +1,4 @@
 # model definition
-def modify(obj):
-    def handle(handler):
-        handler(obj)
-        return obj
-    return handle
-    
 class YamlGenModel:
     class Service:
         def __init__(self, name = None, entrypoint = None, image = None, recreate = None, restart = None, ports = None, volumes = None, links = None):
@@ -36,7 +30,7 @@ def genLinks(yamlGenModel):
     getKeys = lambda : [item[0] for item in groupby(yamlGenModel.relations, lambda n:n.name)]
     getDependencies = lambda key: flattener.flatten([list(map(lambda x:x.depend, item[1])) for item in groupby(yamlGenModel.relations, lambda n:n.name) if item[0] == key])
     genLinks = lambda oldService: None if oldService.name not in getKeys() else \
-        list(map(lambda n:"%s" % n, getDependencies(oldService.name)))
+        list(map(lambda n:"%s:%s" % (n,n), getDependencies(oldService.name)))
     genService = lambda oldService: YamlGenModel.Service( \
                                                           name = oldService.name,
                                                           entrypoint = oldService.entrypoint,

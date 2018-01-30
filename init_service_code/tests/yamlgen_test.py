@@ -104,5 +104,5 @@ def genLinks_test():
                                   YamlGenModel.Relation(name = "c", depend = "b") \
                               ])
     result = genLinks(yamlModel)
-    assert_that(list(filter(lambda n:n.name == 'a', result.services))[0].links).contains("c")
-    assert_that(seq(result.services).filter(lambda n:n.name == 'c')[0].links).contains("b")
+    assert_that(list(filter(lambda n:n.name == 'a', result.services))[0].links).contains("c:c")
+    assert_that(seq(result.services).filter(lambda n:n.name == 'c')[0].links).contains("b:b")
