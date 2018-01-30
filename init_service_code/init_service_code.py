@@ -35,7 +35,7 @@ def main():
         (env.runningPath(), list(map(lambda n:ServiceProject(n), getServices())))
     
     from models.ansible.yamlgen import genRoot, convertToModel, ConvertOption
-    (lambda isDebug:genRoot(env.runningPath(), convertToModel(getServices(), ConvertOption(isDebug = True, rootFolder = env.runningPath())), isDebug))(True)
+    (lambda isDebug:genRoot(env.runningPath(), convertToModel(getServices(), ConvertOption(isDebug = True, rootFolder = env.runningPath()))))(True)
     
     return 0
 

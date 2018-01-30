@@ -16,9 +16,10 @@ class YamlGenModel:
             self.name = name
             self.depend = depend
             
-    def __init__(self, services = [], relations = []):
+    def __init__(self, services = [], relations = [], isDebug = True):
         self.services = services
         self.relations = relations
+        self.isdebug = isDebug
 
 
 # model definition
@@ -77,7 +78,8 @@ def convertToModel(json, convertoption):
 
 
     
-    return genLinks(YamlGenModel([genService(serviceJson["deployConfig"]) for serviceJson in json], flattener.flatten([genRelation(serviceJson) for serviceJson in json])))
+    return genLinks(YamlGenModel([genService(serviceJson["deployConfig"]) for serviceJson in json], flattener.flatten([genRelation(serviceJson) for serviceJson in json]), \
+                                 convertoption.isdebug))
 
 def genAnsibleConfig(parentPath, yamlGenModel):
     import util
@@ -101,23 +103,23 @@ def genTaskFolder(rolePath):
     return util.createFolder("tasks", rolePath)
 
     
-def genRoot(parentPath, yamlGenModel, isDebug):
+def genRoot(parentPath, yamlGenModel):
     import util
     def gen(ansibleFolder):
         genAnsibleConfig(ansibleFolder, yamlGenModel)
         genHosts(ansibleFolder, yamlGenModel)
-        genEntry(ansibleFolder, yamlGenModel, isDebug)
+        genEntry(ansibleFolder, yamlGenModel)
         [genTaskMain(genTaskFolder(result[0]), result[1]) for result in genRoleFolder(ansibleFolder, yamlGenModel)]
 
     gen(util.createFolder("ansible", parentPath))
     
 # gen code for service
-def genEntry(ansibleFolder, yamlGenModel, isDebug):
+def genEntry(ansibleFolder, yamlGenModel):
     import os
     import util
     util.writeContent(os.path.join(ansibleFolder, "site.yaml"), \
         "---%s%s%s...%s" % (os.linesep, BlockBuilder() \
-        .addTitle("hosts", "localhost" if isDebug else "") \
+        .addTitle("hosts", "localhost" if yamlGenModel.isdebug else "") \
         .add("roles", list(map(lambda service:service.name, yamlGenModel.services))) \
         .gen() \
                         , os.linesep, os.linesep))
