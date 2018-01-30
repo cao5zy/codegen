@@ -57,7 +57,7 @@ def convertToModel(json, rootFolder):
             return "%s:%s" % (container, "%s/%s/app" % (rootFolder, deployJson["name"])) if rootFolder else container
         
         return YamlGenModel.Service( name = deployJson["name"], \
-                                     entrypoint = deployJson["entrypoint"] if "entryoint" in deployJson else None, \
+                                     entrypoint = deployJson["entrypoint"] if "entrypoint" in deployJson else None, \
                                      image = "%s:%s" % (deployJson["image"], deployJson["image_tag"]), \
                                      ports = [deployJson["port"]], \
                                      recreate = deployJson["recreate"], \
