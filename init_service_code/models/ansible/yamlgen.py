@@ -54,7 +54,7 @@ def convertToModel(json, rootFolder):
     import flattener
     def genService(deployJson):
         def genVolume(container):
-            return "%s:%s" % (container, "%s/%s/app" % (rootFolder, deployJson["name"])) if rootFolder else container
+            return "%s:%s" % ("%s/%s/app" % (rootFolder, deployJson["name"]), container) if rootFolder else container
         
         return YamlGenModel.Service( name = deployJson["name"], \
                                      entrypoint = deployJson["entrypoint"] if "entrypoint" in deployJson else None, \
