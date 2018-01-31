@@ -64,6 +64,7 @@ def convertToModel_test():
     assert_that(len(result.services[0].volumes)).is_equal_to(1)
     assert_that(result.relations[0].name).is_equal_to("edgesvr2")
     assert_that(result.relations[0].depend).is_equal_to("interface_service")
+    assert_that(result.services[0].type).is_equal_to("microService")
     
 def ConfigBuilder_test():
     from models.ansible.yamlgen import ConfigBuilder

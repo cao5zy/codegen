@@ -1,7 +1,7 @@
 # model definition
 class YamlGenModel:
     class Service:
-        def __init__(self, name = None, entrypoint = None, image = None, recreate = None, restart = None, ports = None, volumes = None, links = None):
+        def __init__(self, name = None, entrypoint = None, image = None, recreate = None, restart = None, ports = None, volumes = None, links = None, type = None):
             self.name = name # key of service, it would be mapped to the deployconfig.name
             self.entrypoint = entrypoint
             self.image = image
@@ -10,7 +10,8 @@ class YamlGenModel:
             self.ports = ports
             self.volumes = volumes
             self.links = links
-
+            self.type = type
+            
     class Relation:
         def __init__(self, name = None, depend = None):
             self.name = name
@@ -40,7 +41,8 @@ def genLinks(yamlGenModel):
                                                           restart = oldService.restart,
                                                           ports = oldService.ports,
                                                           volumes = oldService.volumes,
-                                                          links = genLinks(oldService)
+                                                          links = genLinks(oldService),
+                                                          type = oldService.type
     )
 
     noLinksService = lambda : [service for service in yamlGenModel.services if service.name not in getKeys()]
@@ -67,7 +69,8 @@ def convertToModel(json, convertoption):
                                      ports = ['%s:%s' % (deployJson["port"], deployJson["port"])] if convertoption.isdebug else [deployJson["port"]], \
                                      recreate = deployJson["recreate"], \
                                      restart = deployJson["restart"], \
-                                     volumes = list(map(lambda n:genVolume(n["container"]), deployJson["volumes"])) if "volumes" in deployJson else None \
+                                     volumes = list(map(lambda n:genVolume(n["container"]), deployJson["volumes"])) if "volumes" in deployJson else None, \
+                                     type = deployJson["instanceType"]
         )
 
     def genRelation(serviceJson):
