@@ -17,11 +17,11 @@ class YamlGenModel:
             self.name = name
             self.depend = depend
             
-    def __init__(self, services = [], relations = [], isDebug = True):
+    def __init__(self, services = [], relations = [], isDebug = True, deployRootPath = None):
         self.services = services
         self.relations = relations
         self.isdebug = isDebug
-
+        self.deployRootPath = deployRootPath
 
 # model definition
 def genLinks(yamlGenModel):
@@ -82,7 +82,7 @@ def convertToModel(json, convertoption):
 
     
     return genLinks(YamlGenModel([genService(serviceJson["deployConfig"]) for serviceJson in json], flattener.flatten([genRelation(serviceJson) for serviceJson in json]), \
-                                 convertoption.isdebug))
+                                 convertoption.isdebug, convertoption.rootfolder))
 
 def genAnsibleConfig(parentPath, yamlGenModel):
     import util
