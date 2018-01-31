@@ -61,7 +61,13 @@ def convertToModel(json, convertoption):
     import flattener
     def genService(deployJson):
         def genVolume(container):
-            return "%s:%s" % ("%s/%s/app" % (convertoption.rootfolder, deployJson["name"]), container) if convertoption.isdebug and convertoption.rootfolder else container
+            def genDbVolume():
+                return "%s/%s/db:%s" % (convertoption.rootfolder, deployJson["name"], container) if convertoption.isdebug else container
+
+            def genMicroServiceVolume():
+                return "%s:%s" % ("%s/%s/app" % (convertoption.rootfolder, deployJson["name"]), container) if convertoption.isdebug and convertoption.rootfolder else container
+
+            return genDbVolume() if "instanceType" in deployJson and deployJson["instanceType"] == "microService" else genDbVolume()
         
         return YamlGenModel.Service( name = deployJson["name"], \
                                      entrypoint = deployJson["entrypoint"] if "entrypoint" in deployJson else None, \
@@ -72,6 +78,7 @@ def convertToModel(json, convertoption):
                                      volumes = list(map(lambda n:genVolume(n["container"]), deployJson["volumes"])) if "volumes" in deployJson else None, \
                                      type = deployJson["instanceType"]
         )
+
 
     def genRelation(serviceJson):
         def gen():
