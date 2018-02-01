@@ -107,3 +107,21 @@ def genLinks_test():
     result = genLinks(yamlModel)
     assert_that(list(filter(lambda n:n.name == 'a', result.services))[0].links).contains("c:c")
     assert_that(seq(result.services).filter(lambda n:n.name == 'c')[0].links).contains("b:b")
+
+
+def genVolume_microservice_test():
+    import demjson
+    from models.ansible.yamlgen import genVolume, ConvertOption
+    deployJson = demjson.decode('''{'name': 'abc', 'instanceType': 'microService'}''')
+    result = genVolume("/working", deployJson, ConvertOption(isDebug = True, rootFolder = "./test"))
+
+    assert_that(result).is_equal_to('./test/abc/app:/working')
+
+def genVolume_db_test():
+    import demjson
+    from models.ansible.yamlgen import genVolume, ConvertOption
+    deployJson = demjson.decode('''{'name': 'abc', 'instanceType': 'db'}''')
+    result = genVolume("/working", deployJson, ConvertOption(isDebug = True, rootFolder = "./test"))
+
+    assert_that(result).is_equal_to('./test/abc/db:/working')
+    
