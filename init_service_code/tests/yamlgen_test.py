@@ -2,6 +2,16 @@ from models.ansible.yamlgen import YamlGenModel
 from assertpy import assert_that
 import util
 from Runner import Run
+import logging
+
+logging.basicConfig(level = logging.INFO, \
+                    format = "%(asctime)s:%(message)s", \
+                    filemode = 'w', \
+                    filename = 'log.txt')
+def log_test():
+    from models.ansible.yamlgen import log
+    log('debug', {'txt': "hello" }, lambda n:n["txt"])
+    log('debug', {'txt': "hello1" })
     
 def genTestModel():
     genModel = YamlGenModel()

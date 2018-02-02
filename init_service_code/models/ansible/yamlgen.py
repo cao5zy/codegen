@@ -1,4 +1,14 @@
 # model definition
+import logging
+
+def log(level, objtolog, handler = None):
+    if hasattr(handler, '__call__'):
+        logging.__dict__[level](handler(objtolog))
+    else:
+        logging.__dict__[level](objtolog)
+
+    return objtolog
+
 class YamlGenModel:
     class Service:
         def __init__(self, name = None, entrypoint = None, image = None, recreate = None, restart = None, ports = None, volume = None, links = None, type = None, hostWorkingPath = None):
