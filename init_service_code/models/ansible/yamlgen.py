@@ -4,6 +4,7 @@ import logging
 
 class YamlGenModel:
     class Service:
+        MetaProperties = ["hostWorkingPath"]
         def __init__(self, name = None, entrypoint = None, image = None, recreate = None, restart = None, ports = None, volume = None, links = None, type = None, hostWorkingPath = None):
             self.name = name # key of service, it would be mapped to the deployconfig.name
             self.entrypoint = entrypoint
@@ -266,7 +267,7 @@ def genTaskMain(parentPath, service):
 
 
     def genItems(builder):
-        [builder.add(key, service.__dict__[key], 2) for key in service.__dict__ if service.__dict__[key] != None]
+        [builder.add(key, service.__dict__[key], 2) for key in service.__dict__ if key not in YamlGenModel.Service.MetaProperties and service.__dict__[key] != None]
         return builder
     
     def genDockerContent(builder):
