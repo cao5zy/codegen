@@ -3,6 +3,7 @@ import os
 import shutil
 from jinja2 import Template
 import sys
+import logging
 
 def createFolder(folderName, parentPath = None):
     p = folderName if parentPath == None else os.path.join(parentPath, folderName)
@@ -54,3 +55,11 @@ def createEmptyFile(parentPath, fileName):
     with open(filePath, 'w') as f:
         return (True, filePath)
 
+def log(level, objtolog, handler = None):
+    assert(level in ["debug", "info", "error", "warning", "critical"])
+    if hasattr(handler, '__call__'):
+        logging.__dict__[level](handler(objtolog))
+    else:
+        logging.__dict__[level](objtolog)
+
+    return objtolog

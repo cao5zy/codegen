@@ -2,6 +2,7 @@
 import logging
 
 def log(level, objtolog, handler = None):
+    assert(level in ["DEBUG", "INFO", "ERROR", "WARNING", "CRITICAL"])
     if hasattr(handler, '__call__'):
         logging.__dict__[level](handler(objtolog))
     else:

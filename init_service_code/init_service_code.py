@@ -18,7 +18,7 @@ def getparam(name, default = None):
     import getopt
     options, args = getopt.getopt(sys.argv[1:], "", ["isdebug="])
     return (lambda result: result[0][1] if len(result) > 0 else default) \
-        ([opt for opt in options if opt[0] == '--%s' % name])
+        ([opt for opt in util.log('debug', options, lambda n:{'param':n}) if opt[0] == '--%s' % name])
 
 def main():
     def generateServices(rootPath, allServiceProjects):
