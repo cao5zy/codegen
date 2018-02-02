@@ -1,14 +1,6 @@
 # model definition
 import logging
 
-def log(level, objtolog, handler = None):
-    assert(level in ["DEBUG", "INFO", "ERROR", "WARNING", "CRITICAL"])
-    if hasattr(handler, '__call__'):
-        logging.__dict__[level](handler(objtolog))
-    else:
-        logging.__dict__[level](objtolog)
-
-    return objtolog
 
 class YamlGenModel:
     class Service:
@@ -289,6 +281,6 @@ def genTaskMain(parentPath, service):
                 )
     
     def gen(builder):
-        genDockerContent(builder) if service.type == "microService" else genDockerContent(genDbFolder(builder))
+        return genDockerContent(builder) if service.type == "microService" else genDockerContent(genDbFolder(builder))
 
-    return util.writeContent(os.path.join(parentPath, "main.yaml"), "---{sep}{content}{sep}...{sep}".format(sep = os.linesep, content = gen(BlockBuilder())))
+    return util.writeContent(os.path.join(parentPath, "main.yaml"), "---{sep}{content}{sep}...{sep}".format(sep = os.linesep, content = gen(BlockBuilder()).gen()))
