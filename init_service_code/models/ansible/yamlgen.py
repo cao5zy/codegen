@@ -1,16 +1,17 @@
 # model definition
 class YamlGenModel:
     class Service:
-        def __init__(self, name = None, entrypoint = None, image = None, recreate = None, restart = None, ports = None, volumes = None, links = None, type = None):
+        def __init__(self, name = None, entrypoint = None, image = None, recreate = None, restart = None, ports = None, volume = None, links = None, type = None, hostWorkingPath = None):
             self.name = name # key of service, it would be mapped to the deployconfig.name
             self.entrypoint = entrypoint
             self.image = image
             self.recreate = recreate
             self.restart = restart
             self.ports = ports
-            self.volumes = volumes
+            self.volume = volume
             self.links = links
             self.type = type
+            self.hostWorkingPath = hostWorkingPath
             
     class Relation:
         def __init__(self, name = None, depend = None):
@@ -40,9 +41,11 @@ def genLinks(yamlGenModel):
                                                           recreate = oldService.recreate,
                                                           restart = oldService.restart,
                                                           ports = oldService.ports,
-                                                          volumes = oldService.volumes,
+                                                          volume = oldService.volume,
                                                           links = genLinks(oldService),
-                                                          type = oldService.type
+                                                          type = oldService.type,
+                                                          hostWorkingPath = oldService.hostWorkingPath
+                                                          
     )
 
     noLinksService = lambda : [service for service in yamlGenModel.services if service.name not in getKeys()]
@@ -57,14 +60,18 @@ class ConvertOption:
         self.isdebug = isDebug
         self.rootfolder = rootFolder
 
+def genHostWorkingPath(root, serviceName, isService):
+    genDbWorkingPath = lambda: "{root}/{serviceName}/db".format(root = root, serviceName = serviceName)
+    genMicroServiceWorkingPath = lambda: "{root}/{serviceName}/app".format(root = root, serviceName = serviceName)
+
+    return genMicroServiceWorkingPath() if isService else genDbWorkingPath()
+
+def isMicroService(deployJson):
+    return "instanceType" in deployJson and deployJson["instanceType"] == "microService"
+
 def genVolume(container, deployJson, convertoption):
-    def genDbVolume():
-        return "%s/%s/db:%s" % (convertoption.rootfolder, deployJson["name"], container) if convertoption.isdebug else container
+    return "{hostFolder}:{containerFolder}".format(hostFolder = genHostWorkingPath(convertoption.rootfolder, deployJson["name"], isMicroService(deployJson)) , containerFolder = container) if convertoption.isdebug else container
 
-    def genMicroServiceVolume():
-        return "%s:%s" % ("%s/%s/app" % (convertoption.rootfolder, deployJson["name"]), container) if convertoption.isdebug and convertoption.rootfolder else container
-
-    return genMicroServiceVolume() if "instanceType" in deployJson and deployJson["instanceType"] == "microService" else genDbVolume()
 
 def convertToModel(json, convertoption):
     import flattener
@@ -76,8 +83,9 @@ def convertToModel(json, convertoption):
                                      ports = ['%s:%s' % (deployJson["port"], deployJson["port"])] if convertoption.isdebug else [deployJson["port"]], \
                                      recreate = deployJson["recreate"], \
                                      restart = deployJson["restart"], \
-                                     volumes = list(map(lambda n:genVolume(n["container"], deployJson, convertoption), deployJson["volumes"])) if "volumes" in deployJson else None, \
-                                     type = deployJson["instanceType"]
+                                     volume = genVolume(deployJson["volume"], deployJson, convertoption) if "volume" in deployJson else None, \
+                                     type = deployJson["instanceType"],
+                                     hostWorkingPath = genHostWorkingPath(deployJson["volume"], deployJson["name"], isMicroService(deployJson))
         )
 
 
@@ -252,12 +260,24 @@ class ConfigBuilder:
 def genTaskMain(parentPath, service):
     import os
     import util
+
+
     def genItems(builder):
         [builder.add(key, service.__dict__[key], 2) for key in service.__dict__ if service.__dict__[key] != None]
         return builder
-                        
-    def genDockerScript():
-        return (lambda builder:genItems(builder).gen())(BlockBuilder().addTitle("name", "%s docker container" % service.name).add("docker_container"))
-    return util.writeContent(os.path.join(parentPath, "main.yaml"), "---%s%s%s...%s" % (os.linesep, \
-                                                                               genDockerScript(), \
-                                                                                        os.linesep, os.linesep))
+    
+    def genDockerContent(builder):
+        return genItems( \
+                         builder.addTitle("name", "%s docker container" % service.name).add("docker_container") \
+                         )
+    def genDbFolder(builder):
+        return (builder.addTitle("name", "init db folder") \
+                .add("file") \
+                .add("path", service.hostWorkingPath, 2) \
+                .add("state", "directory", 2) \
+                )
+    
+    def gen(builder):
+        genDockerContent(builder) if service.type == "microService" else genDockerContent(genDbFolder(builder))
+
+    return util.writeContent(os.path.join(parentPath, "main.yaml"), "---{sep}{content}{sep}...{sep}".format(sep = os.linesep, content = gen(BlockBuilder())))
