@@ -97,7 +97,7 @@ def convertToModel(json, convertoption):
         def gen():
             return [YamlGenModel.Relation( name = serviceJson["deployConfig"]["name"], depend = item["name"]) for item in serviceJson["dependedServers"]]
         
-        return [] if not "dependedServers" in serviceJson else gen()
+        return [] if not "dependedServers" in serviceJson or serviceJson["dependedServers"] == None else gen()
 
 
     
