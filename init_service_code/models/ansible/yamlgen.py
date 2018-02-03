@@ -89,7 +89,7 @@ def convertToModel(json, convertoption):
                                      restart = deployJson["restart"], \
                                      volume = genVolume(deployJson["volume"], deployJson, convertoption) if "volume" in deployJson else None, \
                                      type = deployJson["instanceType"],
-                                     hostWorkingPath = genHostWorkingPath(deployJson["volume"], deployJson["name"], isMicroService(deployJson))
+                                     hostWorkingPath = genHostWorkingPath(convertoption.rootfolder, deployJson["name"], isMicroService(deployJson))
         )
 
 
