@@ -98,10 +98,19 @@ cd ..;
 cp ./ng_template/template/. ./ -R;
 rm ng_template -rf;
 '''.format(projectfolder = projectFolder))
+        
         return projectFolder
+
+    def setProjectName(projectFolder):
+        def writeContent(packageFile):
+            util.writeContent(packageFile, util.readContent(packageFile).replace('''"name": "template"''', '''"name": "{name}"'''.format(name = projectName)))
+            return projectFolder
+
+        return writeContent(os.path.join(projectFolder, "package.json"))
     
     return [createProjectFolder(os.path.join(projectPath, projectName))] | select(lambda n:downloadTemplate(n)) \
-                                                                         | first
+        | select(lambda n: setProjectName(n)) \
+        | first
 
 def generateCode(parentPath, serviceProject, allServiceProjects):
     deployConfig = serviceProject.deployConfig
