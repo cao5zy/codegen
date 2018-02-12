@@ -184,7 +184,12 @@ def sortServicesByDependency(services, relations):
         from itertools import groupby
         return [{"project": item[0], "dependencies": list(map(lambda n:n.depend, item[1]))} for item in groupby(relations, lambda x:x.name)]
 
-    return list(map(lambda name:list(filter(lambda n:n.name == name, services))[0], sortByDependency([], completeEntries(genEntries()))))
+    result = services if len(relations) == 0 else \
+             list(map(lambda name:list(filter(lambda n:n.name == name, services))[0], sortByDependency([], completeEntries(genEntries()))))
+
+    assert len(result) == len(services)
+
+    return result
 
 
 def genRoleFolder(parentPath, yamlGenModel):
@@ -282,6 +287,6 @@ def genTaskMain(parentPath, service):
                 )
     
     def gen(builder):
-        return genDockerContent(builder) if service.type == "microService" else genDockerContent(genDbFolder(builder))
+        return genDockerContent(builder) if service.type in ["microService", "frontApp"] else genDockerContent(genDbFolder(builder))
 
     return util.writeContent(os.path.join(parentPath, "main.yaml"), "---{sep}{content}{sep}...{sep}".format(sep = os.linesep, content = gen(BlockBuilder()).gen()))
