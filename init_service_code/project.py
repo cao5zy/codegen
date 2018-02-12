@@ -85,7 +85,7 @@ def createMicroServiceAppFolder(path,appName,  serviceProject, allServiceProject
     util.writeContent(indexFilePath, IndexModuleGenerator(serviceProject, allServiceProjects).gen())
 
 
-def createFrontAppFolder(projectPath, projectName, serviceProject):
+def createFrontAppFolder(projectPath, projectName):
 
     def downloadTemplate(projectFolder):
         import shellrun
@@ -124,7 +124,7 @@ def generateCode(parentPath, serviceProject, allServiceProjects):
         createProjectFolder(projectPath())
         createAnsibleFolder(projectPath(), deployConfig, serviceProject)
         serviceProject.serviceInterface != None and createMicroServiceAppFolder(projectPath(), projectName(), serviceProject, allServiceProjects)
-        serviceProject.serviceInterface == None and serviceProject.deployConfig.type == 'frontApp' and createFrontAppFolder(projectPath(), projectName(), serviceProject)
+        serviceProject.serviceInterface == None and serviceProject.getJson()["deployConfig"]["instanceType"] == 'frontApp' and createFrontAppFolder(projectPath(), projectName())
         
         return (True, projectPath())
 
