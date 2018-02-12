@@ -4,7 +4,7 @@ import logging
 
 class YamlGenModel:
     class Service:
-        MetaProperties = ["hostWorkingPath"]
+        MetaProperties = ["hostWorkingPath", "type"]
         def __init__(self, name = None, entrypoint = None, image = None, recreate = None, restart = None, ports = None, volume = None, links = None, type = None, hostWorkingPath = None):
             self.name = name # key of service, it would be mapped to the deployconfig.name
             self.entrypoint = entrypoint
