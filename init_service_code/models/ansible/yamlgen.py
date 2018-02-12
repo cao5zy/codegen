@@ -73,8 +73,11 @@ def genHostWorkingPath(root, serviceName, isService):
 def isMicroService(deployJson):
     return "instanceType" in deployJson and deployJson["instanceType"] == "microService"
 
+def isFrontApp(deployJson):
+    return "instanceType" in deployJson and deployJson["instanceType"] == "frontApp"
+
 def genVolume(container, deployJson, convertoption):
-    return "{hostFolder}:{containerFolder}".format(hostFolder = genHostWorkingPath(convertoption.rootfolder, deployJson["name"], isMicroService(deployJson)) , containerFolder = container) if convertoption.isdebug else container
+    return "{hostFolder}:{containerFolder}".format(hostFolder = genHostWorkingPath(convertoption.rootfolder, deployJson["name"], isMicroService(deployJson) or isFrontApp(deployJson)) , containerFolder = container) if convertoption.isdebug else container
 
 
 def convertToModel(json, convertoption):
