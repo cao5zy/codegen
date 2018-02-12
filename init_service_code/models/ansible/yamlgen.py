@@ -1,6 +1,6 @@
 # model definition
 import logging
-
+from pipe import *
 
 class YamlGenModel:
     class Service:
@@ -177,11 +177,26 @@ def sortServicesByDependency(services, relations):
 
     def completeEntries(entries):
         import flattener
-        [entries.append({"project": n, "dependencies": []}) \
-         for n in flattener.flatten(list(map(lambda x:x["dependencies"], entries))) \
-             if len(list(filter(lambda x:x["project"] == n, entries))) == 0]
 
-        return entries
+        def contains(item, lst):
+            return lst | any(lambda x:x["project"] == item)
+
+        @Pipe
+        def concatOrigin(lst):
+            return lst + [n for n in entries if not contains(n["project"], lst)]
+
+        @Pipe
+        def concatNoDependencies(lst):
+            return lst + [{"project": n.name, "dependencies": []} for n in services if not contains(n.name, lst)]
+        
+        def gen():
+            return [{"project": n, "dependencies": []} \
+                 for n in flattener.flatten(list(map(lambda x:x["dependencies"], entries))) if not contains(n, entries)] \
+                     | concatOrigin \
+                     | concatNoDependencies
+        
+        return gen()
+
     
     def genEntries():
         from itertools import groupby
