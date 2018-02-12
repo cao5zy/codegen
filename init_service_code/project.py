@@ -21,6 +21,7 @@ from models.serviceInterface import ServiceInterface
 from models.ansible.dependencyGenerator import DependencyGenerator
 from models.ansible.rootGenerator import RootGenerator
 import logging
+from pipe import *
 
 def getFolderName(projectName):
     return "_".join([x for x in re.split('''\s+''', projectName) if len(x.strip()) > 0])
@@ -28,6 +29,7 @@ def getFolderName(projectName):
 
 def createProjectFolder(path):
     os.makedirs(path)
+    return path
 
 def createAnsibleFolder(path, deployConfig, serviceProject):
     result, folderPath = createSubFolder(path, "ansible")
@@ -48,7 +50,7 @@ def createAnsibleFolder(path, deployConfig, serviceProject):
 
 
 
-def createAppFolder(path,appName,  serviceProject, allServiceProjects):
+def createMicroServiceAppFolder(path,appName,  serviceProject, allServiceProjects):
     logging.debug({"appName": appName})
     
     result, folderPath = createSubFolder(path, "app")
@@ -81,7 +83,25 @@ def createAppFolder(path,appName,  serviceProject, allServiceProjects):
     # generate the index
     result, indexFilePath = createEmptyFile(folderPath, "index.js")
     util.writeContent(indexFilePath, IndexModuleGenerator(serviceProject, allServiceProjects).gen())
+
+
+def createFrontAppFolder(projectPath, projectName, serviceProject):
+
+    def downloadTemplate(projectFolder):
+        import shellrun
+        shellrun.run('''cd {projectfolder};
+git clone https://github.com/cao5zy/ng_template.git;
+cd ng_template;
+git checkout 1;
+rm .git -rf;
+cd ..;
+cp ./ng_template/template/. ./ -R;
+rm ng_template -rf;
+'''.format(projectfolder = projectFolder))
+        return projectFolder
     
+    return [createProjectFolder(os.path.join(projectPath, projectName))] | select(lambda n:downloadTemplate(n)) \
+                                                                         | first
 
 def generateCode(parentPath, serviceProject, allServiceProjects):
     deployConfig = serviceProject.deployConfig
@@ -94,7 +114,8 @@ def generateCode(parentPath, serviceProject, allServiceProjects):
     else:
         createProjectFolder(projectPath())
         createAnsibleFolder(projectPath(), deployConfig, serviceProject)
-        serviceProject.serviceInterface != None and createAppFolder(projectPath(), projectName(), serviceProject, allServiceProjects)
+        serviceProject.serviceInterface != None and createMicroServiceAppFolder(projectPath(), projectName(), serviceProject, allServiceProjects)
+        serviceProject.serviceInterface == None and serviceProject.deployConfig.type == 'frontApp' and createFrontAppFolder(projectPath(), projectName(), serviceProject)
         
         return (True, projectPath())
 
