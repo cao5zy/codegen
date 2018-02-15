@@ -126,4 +126,24 @@ def genVolume_db_test():
     result = genVolume("/working", deployJson, ConvertOption(isDebug = True, rootFolder = "./test"))
 
     assert_that(result).is_equal_to('./test/abc/db:/working')
+
+def genProxy_test():
+    from models.ansible.yamlgen import genProxy, YamlGenModel
+    model = YamlGenModel(services = [YamlGenModel.Service(name = "serviceA", type = "microService"), \
+                                     YamlGenModel.Service(name = "frontA", type = "frontApp")], \
+                         deployRootPath = "/home/caozon/test")
+
+    result = genProxy(model)
+
+    assert_that(result.proxy.links).is_length(2)
+    assert_that(result.proxy.volumes).is_length(2)
+    assert_that(result.proxy.volumes[0].host).contains("/home/caozon/test")
     
+def genProxyAnsible_test():
+    from models.ansible.yamlgen import genProxyAnsible, YamlGenModel, genProxy
+
+    yamlGenModel = genProxy(YamlGenModel(services = [YamlGenModel.Service(name = "abc", type = "microService")], \
+                                         deployRootPath = "/home/caozon/test"))
+    content = genProxyAnsible(yamlGenModel)
+
+    assert_that(content).contains("/etc/nginx/logs")

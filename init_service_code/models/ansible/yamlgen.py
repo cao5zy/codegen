@@ -21,12 +21,26 @@ class YamlGenModel:
         def __init__(self, name = None, depend = None):
             self.name = name
             self.depend = depend
+
+    class DockerMapping:
+        def __init__(self, host = None, container = None):
+            self.host = host
+            self.container = container
+
+    class Proxy:
+        def __init__(self, volumes = None, links = None, workingPath = None):
+            self.volumes = volumes
+            self.links = links
+            self.workingPath = workingPath
+
             
-    def __init__(self, services = [], relations = [], isDebug = True, deployRootPath = None):
+    def __init__(self, services = [], relations = [], isDebug = True, deployRootPath = None, proxy = None, proxyName = "nginx_proxy"):
         self.services = services
         self.relations = relations
         self.isdebug = isDebug
         self.deployRootPath = deployRootPath
+        self.proxy = proxy
+        self.proxyname = proxyName
 
 # model definition
 def genLinks(yamlGenModel):
@@ -79,6 +93,25 @@ def isFrontApp(deployJson):
 def genVolume(container, deployJson, convertoption):
     return "{hostFolder}:{containerFolder}".format(hostFolder = genHostWorkingPath(convertoption.rootfolder, deployJson["name"], isMicroService(deployJson) or isFrontApp(deployJson)) , containerFolder = container) if convertoption.isdebug else container
 
+def genProxy(yamlGenModel):
+    def gen():
+        def workingPath():
+            return "{root}/{name}".format(root = yamlGenModel.deployRootPath, name = yamlGenModel.proxyname)
+
+        def volumes():
+            return [YamlGenModel.DockerMapping(host = "{workingPath}/logs".format(workingPath = workingPath()), container = "/etc/nginx/logs")] \
+                + [YamlGenModel.DockerMapping(host = "{workingPath}/conf.d".format(workingPath = workingPath()), container = "/etc/nginx/conf.d")]
+
+        def links():
+            print({'lenof services': yamlGenModel.services[0].type})
+            return yamlGenModel.services \
+                | where(lambda n:n.type in ["microService", "frontApp"]) \
+                | select(lambda n:YamlGenModel.DockerMapping(host = n.name, container = n.name)) \
+                | as_list()
+
+        return YamlGenModel.Proxy(volumes = volumes(), links = links(), workingPath = workingPath())
+
+    return YamlGenModel(services = yamlGenModel.services, relations = yamlGenModel.relations, isDebug = yamlGenModel.isdebug, deployRootPath = yamlGenModel.deployRootPath, proxy = gen())
 
 def convertToModel(json, convertoption):
     import flattener
@@ -104,8 +137,8 @@ def convertToModel(json, convertoption):
 
 
     
-    return genLinks(YamlGenModel([genService(serviceJson["deployConfig"]) for serviceJson in json], flattener.flatten([genRelation(serviceJson) for serviceJson in json]), \
-                                 convertoption.isdebug, convertoption.rootfolder))
+    return genProxy(genLinks(YamlGenModel([genService(serviceJson["deployConfig"]) for serviceJson in json], flattener.flatten([genRelation(serviceJson) for serviceJson in json]), \
+                                 convertoption.isdebug, convertoption.rootfolder)))
 
 def genAnsibleConfig(parentPath, yamlGenModel):
     import util
@@ -128,16 +161,45 @@ def genTaskFolder(rolePath):
     import util
     return util.createFolder("tasks", rolePath)
 
-    
+def genProxyAnsible(yamlGenModel):
+    import os
+    def volumes():
+        return yamlGenModel.proxy.volumes \
+            | select(lambda n:'''"{n.host}:{n.container}"'''.format(n=n)) \
+            | as_list() \
+            if yamlGenModel.proxy and yamlGenModel.proxy.volumes else []
+    def links():
+        return yamlGenModel.proxy.links \
+            | select(lambda n:'''"{n.host}:{n.container}"'''.format(n=n)) \
+            | as_list() \
+            if yamlGenModel.proxy and yamlGenModel.proxy.links else []
+
+    return "---{sep}{content}{sep}...{sep}".format(sep = os.linesep, content = BlockBuilder().addTitle("name", "nginx proxy container") \
+        .add("docker_container") \
+        .add("name", "proxy_server", 1) \
+        .add("image", "nginx:1.12", 1) \
+        .add("volumes", volumes(), 1) \
+        .add("links", links(), 1) \
+        .gen())
+        
+
 def genRoot(parentPath, yamlGenModel):
     import util
+    import os
     def gen(ansibleFolder):
-        genAnsibleConfig(ansibleFolder, yamlGenModel)
-        genHosts(ansibleFolder, yamlGenModel)
-        genEntry(ansibleFolder, yamlGenModel)
-        [genTaskMain(genTaskFolder(result[0]), result[1]) for result in genRoleFolder(ansibleFolder, yamlGenModel)]
+        def genRoles(rolesFolder):
+            genAnsibleConfig(ansibleFolder, yamlGenModel)
+            genHosts(ansibleFolder, yamlGenModel)
+            genEntry(ansibleFolder, yamlGenModel)
+            [genTaskMain(genTaskFolder(result[0]), result[1]) for result in genRoleFolder(rolesFolder, yamlGenModel)]
+
+            util.writeContent("%s/main.yaml" % genTaskFolder(os.path.join(rolesFolder, yamlGenModel.proxyname)), genProxyAnsible(yamlGenModel))
+
+        return genRoles(genRolesFolder(ansibleFolder))
+        
 
     gen(util.createFolder("ansible", parentPath))
+
     
 # gen code for service
 def genEntry(ansibleFolder, yamlGenModel):
@@ -209,19 +271,20 @@ def sortServicesByDependency(services, relations):
 
     return result
 
-
-def genRoleFolder(parentPath, yamlGenModel):
+def genRolesFolder(parentPath):
     import util
-    def genRolesFolder():
-        return util.createFolder("roles", parentPath)
+    return util.createFolder("roles", parentPath)
 
-    def genContent(rolesFolder):
+def genRoleFolder(rolesFolder, yamlGenModel):
+    import util
+
+    def genContent():
         def gen(serviceName):
             return util.createFolder(serviceName, rolesFolder)
 
         return list(map(lambda service: (gen(service.name), service), sortServicesByDependency(yamlGenModel.services, yamlGenModel.relations)))
 
-    return genContent(genRolesFolder())
+    return genContent()
 
 class BlockBuilder:
     
