@@ -3,7 +3,7 @@ from assertpy import assert_that
 import util
 from Runner import Run
 import logging
-
+from pipe import *
     
 def genTestModel():
     genModel = YamlGenModel()
@@ -129,21 +129,18 @@ def genVolume_db_test():
 
 def genProxy_test():
     from models.ansible.yamlgen import genProxy, YamlGenModel
+    import flattener
     model = YamlGenModel(services = [YamlGenModel.Service(name = "serviceA", type = "microService"), \
                                      YamlGenModel.Service(name = "frontA", type = "frontApp")], \
                          deployRootPath = "/home/caozon/test")
 
     result = genProxy(model)
 
-    assert_that(result.proxy.links).is_length(2)
-    assert_that(result.proxy.volumes).is_length(2)
-    assert_that(result.proxy.volumes[0].host).contains("/home/caozon/test")
+    assert_that(result.services).is_length(3)
+    assert_that(result.services | where(lambda n:n.type == "proxy") | as_list()).is_length(1)
+    assert_that(result.services | where(lambda n:n.type == "proxy") | select(lambda n:n.links) | chain | as_list()).is_length(2)
+    assert_that(result.services | where(lambda n:n.type == "proxy") | select(lambda n:n.volume) | chain | as_list()).contains("/home/caozon/test/nginx_proxy/logs:/etc/nginx/logs") \
+        .contains("/home/caozon/test/nginx_proxy/conf.d:/etc/nginx/conf.d")
+
     
-def genProxyAnsible_test():
-    from models.ansible.yamlgen import genProxyAnsible, YamlGenModel, genProxy
 
-    yamlGenModel = genProxy(YamlGenModel(services = [YamlGenModel.Service(name = "abc", type = "microService")], \
-                                         deployRootPath = "/home/caozon/test"))
-    content = genProxyAnsible(yamlGenModel)
-
-    assert_that(content).contains("/etc/nginx/logs")
