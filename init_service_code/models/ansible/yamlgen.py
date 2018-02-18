@@ -56,8 +56,10 @@ def genLinks(yamlGenModel):
     noLinksService = lambda : [service for service in yamlGenModel.services if service.name not in getKeys()]
     haveLinksService = lambda : [genService(service) for service in yamlGenModel.services if service.name in getKeys()]
     return YamlGenModel(
-        noLinksService() + haveLinksService(),
-        yamlGenModel.relations
+        services = noLinksService() + haveLinksService(),
+        relations = yamlGenModel.relations,
+        isDebug = yamlGenModel.isdebug,
+        deployRootPath = yamlGenModel.deployRootPath
     )
 
 class ConvertOption:
@@ -130,8 +132,10 @@ def convertToModel(json, convertoption):
 
 
     
-    return genProxy(genLinks(YamlGenModel([genService(serviceJson["deployConfig"]) for serviceJson in json], flattener.flatten([genRelation(serviceJson) for serviceJson in json]), \
-                                 convertoption.isdebug, convertoption.rootfolder)))
+    return genProxy(genLinks(YamlGenModel(services = [genService(serviceJson["deployConfig"]) for serviceJson in json], \
+                                          relations = flattener.flatten([genRelation(serviceJson) for serviceJson in json]), \
+                                          isDebug = convertoption.isdebug, \
+                                          deployRootPath = convertoption.rootfolder)))
 
 def genAnsibleConfig(parentPath, yamlGenModel):
     import util

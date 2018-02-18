@@ -165,7 +165,7 @@ server {
   }
 {% endfor %}
 }
- ''').render(servers = getServices())
+ ''').render(servers = getServices(), name = yamlGenModel.proxyname)
         
         def genConfFile(configFolder):
             util.writeContent(os.path.join(configFolder, "app.conf"), \
@@ -173,7 +173,7 @@ server {
 
         genLogsFolder()
         genConfFile(genConfFolder())
-        
+
     gen(os.path.join(yamlGenModel.deployRootPath, yamlGenModel.proxyname))
     
 

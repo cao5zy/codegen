@@ -46,12 +46,12 @@ def main():
         from models.ansible.yamlgen import genRoot, convertToModel, ConvertOption
 
         def gen(model):
-            genRoot(env.runningPath(), model)
+            genRoot(rootPath, model)
 
             from project import generateProxy
             generateProxy(model)
 
-        gen(convertToModel(getServices(), ConvertOption(isDebug = getparam('isdebug', 'true').lower() == 'true', rootFolder = env.runningPath())))
+        gen(convertToModel(getServices(), ConvertOption(isDebug = getparam('isdebug', 'true').lower() == 'true', rootFolder = rootPath)))
     
 
     genAnsibleCode(True, env.runningPath())
