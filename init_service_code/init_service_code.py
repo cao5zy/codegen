@@ -48,6 +48,9 @@ def main():
         def gen(model):
             genRoot(env.runningPath(), model)
 
+            from project import generateProxy
+            generateProxy(model)
+
         gen(convertToModel(getServices(), ConvertOption(isDebug = getparam('isdebug', 'true').lower() == 'true', rootFolder = env.runningPath())))
     
 

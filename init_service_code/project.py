@@ -128,4 +128,28 @@ def generateCode(parentPath, serviceProject, allServiceProjects):
         
         return (True, projectPath())
 
+def generateProxy(yamlGenModel):
+    from jinja2 import Template
+    def gen(projectFolder):
+        createProjectFolder(projectFolder)
+        
+        def genLogsFolder():
+            return createProjectFolder(os.path.join(projectFolder, "logs"))
+
+        def genConfFolder():
+            return createProjectFolder(os.path.join(projectFolder, "conf.d"))
+
+        def genConfig():
+            return Template(''' ''').render()
+        
+        def genConfFile(configFolder):
+            util.writeContent(os.path.join(configFolder, "app.conf"), \
+                              genConfig())
+
+        genLogsFolder()
+        genConfFile(genConfFolder())
+        
+    gen(os.path.join(yamlGenModel.deployRootPath, yamlGenModel.proxyname))
+    
+
 
