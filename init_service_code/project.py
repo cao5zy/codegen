@@ -139,8 +139,33 @@ def generateProxy(yamlGenModel):
         def genConfFolder():
             return createProjectFolder(os.path.join(projectFolder, "conf.d"))
 
+        def getPort(service):
+            return service.ports[0].split(":")[0] if isinstance(service.ports, list) else service.ports
+        def getServices():
+            return yamlGenModel.services \
+                | where(lambda service: service.type in ["microService", "frontApp"]) \
+                | select(lambda service: { "name": service.name, "port": getPort(service)}) \
+                | as_list()
+        
         def genConfig():
-            return Template(''' ''').render()
+            return Template('''{% for server in servers %}upstream {{server.name}} {
+  server {{server.name}}:{{server.port}};
+  keepalive 2000;
+}
+{% endfor %} 
+
+server {
+  listen 80;
+  server_name {{name}}
+  client_max_body_size 1024M;
+
+  {%for server in servers %}location /_api/{{server.name}}/ {
+    proxy_pass http://{{server.name}}/;
+    proxy_set_header Host $host:$server_port;
+  }
+{% endfor %}
+}
+ ''').render(servers = getServices())
         
         def genConfFile(configFolder):
             util.writeContent(os.path.join(configFolder, "app.conf"), \
