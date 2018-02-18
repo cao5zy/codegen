@@ -37,8 +37,10 @@ def main():
             (AllGenerator(rootPath, allServiceProjects).gen(), util.createEmptyFile(rootPath, "root.yml"))
 
 
-    (lambda rootPath, allServiceProjects:(lambda x,y:x)(generateServices(rootPath, allServiceProjects), generateRootAnsible(rootPath, allServiceProjects)))\
-        (env.runningPath(), list(map(lambda n:ServiceProject(n), getServices())))
+    (lambda rootPath, allServiceProjects:\
+     (lambda x,y:x)(generateServices(rootPath, allServiceProjects), generateRootAnsible(rootPath, allServiceProjects)) \
+    ) \
+    (env.runningPath(), list(map(lambda n:ServiceProject(n), getServices())))
 
     from models.ansible.yamlgen import genRoot, convertToModel, ConvertOption
     (lambda isDebug:genRoot(env.runningPath(), convertToModel(getServices(), ConvertOption(isDebug = getparam('isdebug', 'true').lower() == 'true', rootFolder = env.runningPath()))))(True)
