@@ -1,20 +1,20 @@
 from urllib.parse import urlparse
 from codegenhelper import debug
 
-def get_user_name():
-    pass
-
-def get_pwd():
-    pass
+def get_input(name):
+    result = input("please input {}:".format(name))
+    if not result:
+        raise Exception("no {} is supplied".format(name))
+    return result
 
 def get_login_url(url):
     return (lambda result:"{scheme}://{netloc}/auth".format(scheme = result.scheme, netloc = result.netloc))(urlparse(url))
 
 def getToken(login_url, userName, pwd):
-    def get_token(username, passwork):
+    def get_token(username, password):
         pass
 
-    return get_token(userName or get_user_name(), pwd or get_pwd())
+    return get_token(userName or get_input("username"), pwd or get_input("pwd"))
 
 def get_json(url, token):
     pass
