@@ -2,6 +2,7 @@ from urllib.parse import urlparse
 from codegenhelper import debug
 import requests
 import urllib
+import demjson
 
 def get_input(name):
     result = input("please input {}:".format(name))
@@ -21,6 +22,8 @@ def get_json(url, name, token):
     return debug(requests.get(url, headers={"name": name, "token": token}).text, "get_json_resutl")
 
 def getJson(url, userName=None, password=None):
-    return (lambda name, pwd:\
+    return demjson.decode(\
+                          (lambda name, pwd:\
             get_json(url, name, getToken(get_login_url(url), name, pwd))) \
-            (userName or get_input("username"), password or get_input("password"))
+            (userName or get_input("username"), password or get_input("password")) \
+    )
