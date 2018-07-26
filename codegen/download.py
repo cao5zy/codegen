@@ -18,7 +18,7 @@ def getToken(login_url, name, pwd):
             (requests.post(login_url, json={"name": name, "pwd": pwd}))
 
 def get_json(url, name, token):
-    debug(requests.get(url, headers={"name": name, "token": token}).text, "get_json_resutl")
+    return debug(requests.get(url, headers={"name": name, "token": token}).text, "get_json_resutl")
 
 def getJson(url, userName=None, password=None):
     return (lambda name, pwd:\
