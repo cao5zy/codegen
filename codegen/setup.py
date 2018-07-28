@@ -6,7 +6,7 @@ requires = []
 
 setup(
     name = name,
-    version = '0.0.1',
+    version = '0.0.2',
     scripts = ["scripts/codegen"]
     author = 'Zongying Cao',
     author_email = 'zongying.cao@dxc.com',

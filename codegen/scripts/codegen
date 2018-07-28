@@ -1,6 +1,9 @@
 #! /usr/bin/python3
 usage=\
 '''
+# to debug, set the _DEBUG environment variable
+export _DEBUG="debug"
+
 # generate the code in current directory, 
 codegen <url>
 
