@@ -1,0 +1,27 @@
+#! /usr/bin/python3
+usage=\
+'''
+# generate the code in current directory, 
+codegen <url>
+
+# generate the code in the specified directory
+codegen <url> -o "./code/to/output"
+
+# generate the code with username and password
+codegen <url> -u <username> -p <password>
+
+'''
+from optparse import OptionParser
+from codegen import run
+from codegenhelper import debug
+
+parser = OptionParser()
+parser.add_option("-o", "--output", dest="output", default="./")
+parser.add_option("-u", "--username", dest="username", default=None)
+parser.add_option("-p", "--password", dest="password", default=None)
+
+(options, args) = parser.parse_args(sys.argv)
+debug(options, "options")
+debug(args, "args")
+run(options["output"], args[0], options["username"], options["password"])
+
