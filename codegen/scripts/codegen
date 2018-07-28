@@ -17,14 +17,17 @@ codegen <url> -u <username> -p <password>
 from optparse import OptionParser
 from codegen import run
 from codegenhelper import debug
+import sys
 
 parser = OptionParser()
 parser.add_option("-o", "--output", dest="output", default="./")
 parser.add_option("-u", "--username", dest="username", default=None)
 parser.add_option("-p", "--password", dest="password", default=None)
 
-(options, args) = parser.parse_args(sys.argv)
-debug(options, "options")
-debug(args, "args")
-run(options["output"], args[0], options["username"], options["password"])
+(lambda ret: \
+ (lambda options, args: \
+  run(options.output, args[1], options.username, options.password)) \
+ (ret[0], ret[1])) \
+ (parser.parse_args(sys.argv))
+
 

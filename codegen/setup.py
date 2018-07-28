@@ -6,14 +6,14 @@ requires = []
 
 setup(
     name = name,
-    version = '0.0.2',
-    scripts = ["scripts/codegen"]
+    version = '0.0.4',
+    scripts = ["scripts/codegen"],
     author = 'Zongying Cao',
     author_email = 'zongying.cao@dxc.com',
     description = 'codegen is a library for generating the infrastructure code of microservices.',
-    long_description = """nodejs-codegen is a library for generating the infrastructure code of microservices.""",
+    long_description = """codegen is a library for generating the infrastructure code of microservices.""",
     packages = [name],
-    package_dir = {'codegen': 'code'},
+    package_dir = {'codegen': 'codegen'},
     package_data = {'codegen': ["*.py"]},
     include_package_data = True,
     install_requires = requires,
