@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
-name = "codegen"
+name = "md_codegen"
 
 requires = ['nodejs_codegen>=0.0.20']
 
 setup(
     name = name,
-    version = '0.0.6',
+    version = '0.0.7',
     scripts = ["scripts/codegen"],
     author = 'Zongying Cao',
     author_email = 'zongying.cao@dxc.com',
     description = 'codegen is a library for generating the infrastructure code of microservices.',
     long_description = """codegen is a library for generating the infrastructure code of microservices.""",
     packages = [name],
-    package_dir = {'codegen': 'codegen'},
-    package_data = {'codegen': ["*.py"]},
+    package_dir = {'md_codegen': 'codegen'},
+    package_data = {'md_codegen': ["*.py"]},
     include_package_data = True,
     install_requires = requires,
     license = 'Apache',
