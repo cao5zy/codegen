@@ -15,7 +15,7 @@ codegen <url> -u <username> -p <password>
 
 '''
 from optparse import OptionParser
-from codegen import run
+from md_codegen import run
 from codegenhelper import debug
 import sys
 
