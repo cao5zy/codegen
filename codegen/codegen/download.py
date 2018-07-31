@@ -3,7 +3,7 @@ from codegenhelper import debug
 import requests
 import urllib
 import demjson
-
+from getpass import getpass
 def get_input(name):
     result = input("please input {}:".format(name))
     if not result:
@@ -25,5 +25,5 @@ def getJson(url, userName=None, password=None):
     return demjson.decode(\
                           (lambda name, pwd:\
             get_json(url, name, getToken(get_login_url(url), name, pwd))) \
-            (userName or get_input("username"), password or get_input("password")) \
+            (userName or get_input("username"), password or getpass("please input password:")) \
     )
