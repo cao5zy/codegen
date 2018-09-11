@@ -6,7 +6,7 @@ requires = ['nodejs_codegen>=0.3.2']
 
 setup(
     name = name,
-    version = '0.2.1',
+    version = '0.2.2',
     scripts = ["scripts/codegen"],
     author = 'Zongying Cao',
     author_email = 'zongying.cao@dxc.com',
