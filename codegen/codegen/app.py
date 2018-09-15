@@ -13,4 +13,4 @@ def run(root, url, username = None, password = None):
             
     (lambda folder_path: \
      [gen_code(debug(app_data, "app_data"), \
-          put_folder(app_data["deployConfig"]["instanceName"], folder_path)) for app_data in getJson(url, username, password) ])(put_folder(root))
+          put_folder(app_data["deployConfig"]["instanceName"], folder_path)) for app_data in debug(getJson(url, username, password), "getJson result")])(put_folder(root))
