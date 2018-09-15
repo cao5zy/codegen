@@ -14,7 +14,7 @@ pip install md_codegen
 ```
 codegen <url> -u <username> -p <password> -o <output path>
 ```
-* `url`: the url to download the *microservice definitions*. It would follow the pattern `http://<host>:<port>/_api/interface_service/interface_service`.   
+* `url`: the url to download the *microservice definitions*. It would follow the pattern `http://<host>:<port>/_api/interfacedef_get_service/query/:login/interface_entries`.   
 * `u`: the username to access the account. If it is omitted, the program will prompt to input `username`.    
 * `p`: the password to access the account. If it is omitted, the program will prompt to input `password`.  
 * `o`: the output path to store the generated code. If it is omitted, the generated code will be stored in the current folder.   
