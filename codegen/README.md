@@ -18,3 +18,5 @@ codegen <url> -u <username> -p <password> -o <output path>
 * `u`: the username to access the account. If it is omitted, the program will prompt to input `username`.    
 * `p`: the password to access the account. If it is omitted, the program will prompt to input `password`.  
 * `o`: the output path to store the generated code. If it is omitted, the generated code will be stored in the current folder.   
+
+> If you want to update the interface defintion to your code, you should commit the changes in your local and make sure your local git repository is clean or the code generation will abort.
