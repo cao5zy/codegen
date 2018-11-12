@@ -23,10 +23,11 @@ parser = OptionParser()
 parser.add_option("-o", "--output", dest="output", default="./")
 parser.add_option("-u", "--username", dest="username", default=None)
 parser.add_option("-p", "--password", dest="password", default=None)
+parser.add_option("-e", "--project", dest="project", default=None)
 
 (lambda ret: \
  (lambda options, args: \
-  run(options.output, args[1], options.username, options.password)) \
+  run(options.output, args[1], options.project,  options.username, options.password)) \
  (ret[0], ret[1])) \
  (parser.parse_args(sys.argv))
 
