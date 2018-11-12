@@ -2,7 +2,7 @@ from codegen.download import getJson
 from assertpy import assert_that
 
 def test_download():
-    url="http://130.175.64.9:9008/_api/interface_service/interface_service"
+    url="http://104.46.103.208:9008"
 
-    assert_that(getJson(url, 'alan1', '123')[0]).contains('deployConfig')
+    assert_that(getJson(url, "test1", 'alan1', '123')[0]).contains('deployConfig')
 
