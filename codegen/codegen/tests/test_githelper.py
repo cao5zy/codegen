@@ -4,6 +4,7 @@ from codegenhelper import put_folder, remove_test_folder, init_test_folder, test
 from ..githelper import has_uncommit, cmd
 import subprocess
 import os
+import time
 
 def cmd(command, cwd):
     return subprocess.call(command, shell=True, cwd=cwd)
@@ -39,4 +40,5 @@ def test_has_uncommit_false():
 
 @with_setup(setup_folder_with_no_git, remove_test_folder)
 def test_has_repo_false():
+    time.sleep(1)
     assert_that(has_uncommit(os.path.join(test_root(), project_name))).is_true()
