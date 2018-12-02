@@ -34,3 +34,13 @@ def test_run():
     
     
     
+def test_run_data_str():
+    root = test_root()
+    template_url = "git@github.com:cao5zy/nodejs_microservice_seneca_template.git"
+    template_tag = "v0.0.2"
+
+    run(root, "", "", template_url, template_tag, jsonstr = '''{ "deployConfig":{"instanceName": "test1"}}''')
+
+    assert_that(os.path.join(test_root(), "test1", ".template",  "nodejs_microservice_seneca_template")).exists()
+    assert_that(os.path.join(test_root(), "test1", "src",  "app.js")).exists()
+
