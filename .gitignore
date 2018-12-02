@@ -99,4 +99,10 @@ ENV/
 
 # mypy
 .mypy_cache/
+<<<<<<< HEAD
 env_codegen
+=======
+test_deploy
+test_env
+test_node_image
+>>>>>>> 9d31b7ff4f04e203f912f31e09a5e217a5a48eeb
