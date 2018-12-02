@@ -12,7 +12,7 @@ def run(root, url, project_name, template_repo, template_tag, username = None, p
             return data if data and isinstance(data, list) else [data] if data else None
 
         def get_from_file():
-            return get_from_data(demjosn.decode_file(datafile) if datafile and os.path.exists(datafile) else None)
+            return get_from_data(demjson.decode_file(datafile) if datafile and os.path.exists(datafile) else None)
 
         return get_from_data(demjson.decode(jsonstr) if jsonstr else None) or get_from_file()
     

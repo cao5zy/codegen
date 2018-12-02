@@ -3,13 +3,16 @@ from nose import with_setup
 from assertpy import assert_that
 import os
 import logging
-from codegenhelper import test_root, init_test_folder, remove_test_folder
+from codegenhelper import test_root, init_test_folder, remove_test_folder, put_file
 
 logging.basicConfig(level = logging.DEBUG)
 
 def setup_folder():
     init_test_folder()
-    
+
+    put_file("datafile", test_root(), '''{
+    deployConfig: {instanceName: "tourist2"}
+} ''')
     
 @with_setup(setup_folder, remove_test_folder)
 def test_run():
@@ -33,7 +36,7 @@ def test_run():
     assert_that(os.path.join(test_root(), "inventory", "src",  "config", "log4js.json")).exists()
     
     
-    
+@with_setup(setup_folder, remove_test_folder)    
 def test_run_data_str():
     root = test_root()
     template_url = "git@github.com:cao5zy/nodejs_microservice_seneca_template.git"
@@ -44,3 +47,13 @@ def test_run_data_str():
     assert_that(os.path.join(test_root(), "test1", ".template",  "nodejs_microservice_seneca_template")).exists()
     assert_that(os.path.join(test_root(), "test1", "src",  "app.js")).exists()
 
+@with_setup(setup_folder, remove_test_folder)    
+def test_run_data_file():
+    root = test_root()
+    template_url = "git@github.com:cao5zy/nodejs_microservice_seneca_template.git"
+    template_tag = "v0.0.2"
+
+    run(root, "", "", template_url, template_tag, datafile = os.path.join(test_root(), "datafile"))
+
+    assert_that(os.path.join(test_root(), "tourist2", ".template",  "nodejs_microservice_seneca_template")).exists()
+    assert_that(os.path.join(test_root(), "tourist2", "src",  "app.js")).exists()
