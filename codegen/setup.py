@@ -2,11 +2,11 @@
 from setuptools import setup, find_packages
 name = "md_codegen"
 
-requires = ['nodejs_codegen>=0.3.7', 'codegenhelper>=0.0.16']
+requires = ['codegenhelper>=0.0.16']
 
 setup(
     name = name,
-    version = '0.2.8',
+    version = '0.2.9',
     scripts = ["scripts/codegen"],
     author = 'Zongying Cao',
     author_email = 'zongying.cao@dxc.com',
