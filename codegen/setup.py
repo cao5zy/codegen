@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 name = "md_codegen"
 
-requires = ['nodejs_codegen>=0.3.7', 'codegenhelper>=0.0.14']
+requires = ['nodejs_codegen>=0.3.7', 'codegenhelper>=0.0.16']
 
 setup(
     name = name,
