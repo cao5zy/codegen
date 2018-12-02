@@ -19,10 +19,18 @@ def test_run():
     root = test_root()
     project_name = "test1"
     template_url = "git@github.com:cao5zy/nodejs_microservice_seneca_template.git"
-    template_tag = "0.0.1"
+    template_tag = "v0.0.2"
     run(root, url, project_name, template_url, template_tag, username, password)
 
     assert_that(os.path.join(test_root(), "tourist", ".template",  "nodejs_microservice_seneca_template")).exists()
+    assert_that(os.path.join(test_root(), "tourist", "src",  "app.js")).exists()
+    
     assert_that(os.path.join(test_root(), "customers", ".template",  "nodejs_microservice_seneca_template")).exists()
+    assert_that(os.path.join(test_root(), "customers", "src",  "app.js")).exists()
+    
     assert_that(os.path.join(test_root(), "inventory", ".template",  "nodejs_microservice_seneca_template")).exists()
+    assert_that(os.path.join(test_root(), "inventory", "src",  "app.js")).exists()
+    assert_that(os.path.join(test_root(), "inventory", "src",  "config", "log4js.json")).exists()
+    
+    
     
