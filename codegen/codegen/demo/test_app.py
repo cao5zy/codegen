@@ -22,4 +22,7 @@ def test_run():
     template_tag = "0.0.1"
     run(root, url, project_name, template_url, template_tag, username, password)
 
-    assert_that(os.path.join(test_root(), ".template", "nodejs_microservice_seneca_template")).exists()
+    assert_that(os.path.join(test_root(), "tourist", ".template",  "nodejs_microservice_seneca_template")).exists()
+    assert_that(os.path.join(test_root(), "customers", ".template",  "nodejs_microservice_seneca_template")).exists()
+    assert_that(os.path.join(test_root(), "inventory", ".template",  "nodejs_microservice_seneca_template")).exists()
+    
