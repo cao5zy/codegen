@@ -4,8 +4,9 @@ from codegenhelper import put_folder, log, get_tag, put_folder
 import os
 from fn import F
 from code_engine import publish
+import demjson
 
-def run(root, url, project_name, template_repo, template_tag, username = None, password = None, jsonData = None, datafile = None):
+def run(root, url, project_name, template_repo, template_tag, username = None, password = None, jsonstr = None, datafile = None):
     def get_data():
         def get_from_data(data):
             return data if data and isinstance(data, list) else [data] if data else None
@@ -13,7 +14,7 @@ def run(root, url, project_name, template_repo, template_tag, username = None, p
         def get_from_file():
             return get_from_data(demjosn.decode_file(datafile) if datafile and os.path.exists(datafile) else None)
 
-        return get_from_data(jsonData) or get_from_file()
+        return get_from_data(demjson.decode(jsonstr) if jsonstr else None) or get_from_file()
     
     def gen_code(app_data, project_folder):
         def fetch_template():
