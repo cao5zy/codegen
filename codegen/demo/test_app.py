@@ -25,13 +25,11 @@ def test_run():
     template_tag = "v0.0.2"
     run(root, url, project_name, template_url, template_tag, username, password)
 
-    assert_that(os.path.join(test_root(), "tourist", ".template",  "nodejs_microservice_seneca_template")).exists()
+    assert_that(os.path.join(test_root(), ".template",  "nodejs_microservice_seneca_template")).exists()
     assert_that(os.path.join(test_root(), "tourist", "src",  "app.js")).exists()
     
-    assert_that(os.path.join(test_root(), "customers", ".template",  "nodejs_microservice_seneca_template")).exists()
     assert_that(os.path.join(test_root(), "customers", "src",  "app.js")).exists()
     
-    assert_that(os.path.join(test_root(), "inventory", ".template",  "nodejs_microservice_seneca_template")).exists()
     assert_that(os.path.join(test_root(), "inventory", "src",  "app.js")).exists()
     assert_that(os.path.join(test_root(), "inventory", "src",  "config", "log4js.json")).exists()
     
@@ -44,7 +42,6 @@ def test_run_data_str():
 
     run(root, "", "", template_url, template_tag, jsonstr = '''{ "deployConfig":{"instanceName": "test1"}}''')
 
-    assert_that(os.path.join(test_root(), "test1", ".template",  "nodejs_microservice_seneca_template")).exists()
     assert_that(os.path.join(test_root(), "test1", "src",  "app.js")).exists()
 
 @with_setup(setup_folder, remove_test_folder)    
@@ -55,5 +52,4 @@ def test_run_data_file():
 
     run(root, "", "", template_url, template_tag, datafile = os.path.join(test_root(), "datafile"))
 
-    assert_that(os.path.join(test_root(), "tourist2", ".template",  "nodejs_microservice_seneca_template")).exists()
     assert_that(os.path.join(test_root(), "tourist2", "src",  "app.js")).exists()
