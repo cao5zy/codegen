@@ -11,7 +11,7 @@ logging.basicConfig(level = logging.DEBUG)
 def run(root, url, project_name, template_repo, template_tag,  username = None, password = None):
     def gen_code(app_data, project_folder):
         def fetch_template():
-            return get_tag(template_repo, template_tag, put_folder(os.path.join(root, ".template"), root))
+            return get_tag(template_repo, template_tag, log(__name__)("template_folder").debug(put_folder(".template", root)))
 
         def gen_with_template(template_path):
             publish(template_path, app_data, project_folder)
