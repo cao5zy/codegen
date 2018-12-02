@@ -36,11 +36,11 @@ def run(root, url, project_name, template_repo, template_tag, username = None, p
 
             return process_mapping(jsonData, demjson.decode_file(project_name_map_file), "/")["project_name"]
         
-        return jsonData["project_name"] if "project_name" in jsonData else map_project_name(os.path.join(template_path, "project_name.map"))
+        return jsonData["project_name"] if "project_name" in jsonData else map_project_name(os.path.join(template_path, ".mapper"))
         
     
     (lambda folder_path, template_path: \
      [gen_code(log(__name__)("app_data").debug(app_data),
-               put_folder(app_data["deployConfig"]["instanceName"], folder_path), template_path) for app_data in get_data() or getJson(url, project_name, username, password)])(put_folder(root), fetch_template())
+               put_folder(get_project_name(app_data, template_path), folder_path), template_path) for app_data in get_data() or getJson(url, project_name, username, password)])(put_folder(root), fetch_template())
 
 

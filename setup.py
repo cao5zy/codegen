@@ -2,11 +2,11 @@
 from setuptools import setup, find_packages
 name = "md_codegen"
 
-requires = ['codegenhelper>=0.0.16', 'code-engine>=1.0.13']
+requires = ['codegenhelper>=0.0.16', 'code-engine>=1.0.13', 'deep-mapper1>=0.0.1']
 
 setup(
     name = name,
-    version = '0.3.1',
+    version = '0.3.2',
     scripts = ["scripts/codegen"],
     author = 'Zongying Cao',
     author_email = 'zongying.cao@dxc.com',
