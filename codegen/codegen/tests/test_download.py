@@ -1,4 +1,4 @@
-from ..download import get_login_url
+from ..download import get_login_url, getJson
 from assertpy import assert_that
 
 def test_get_login_url():
