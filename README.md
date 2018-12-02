@@ -2,7 +2,7 @@
 
 # Description
 **codegen** is tool for generating code for [microservice accelerator](https://github.houston.entsvcs.net/zongying-cao/micro-service-accelerator).
-It currently invoke [nodejs-codegen](https://github.com/cao5zy/nodejs-codegen) to generate micro-service project for nodejs.   
+It generates code with specified [templates](templates.md).  
 
 # Installation
 ```
