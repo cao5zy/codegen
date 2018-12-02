@@ -11,9 +11,6 @@ def run(root, url, project_name, template_repo, template_tag,  username = None, 
             return get_tag(template_repo, template_tag, log(__name__)("template_folder").debug(put_folder(".template", project_folder)))
 
         def gen_with_template(template_path):
-            import pdb
-            pdb.set_trace()
-            
             publish(template_path, app_data, project_folder)
         
         if len(os.listdir(project_folder)) == 0 or not has_uncommit(project_folder):
