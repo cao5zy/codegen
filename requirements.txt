@@ -9,12 +9,12 @@ codegenhelper==0.0.16
 deep-mapper1==0.0.1
 demjson==2.2.4
 docutils==0.14
+fn==0.4.3
 future==0.16.0
 idna==2.7
 Jinja2==2.10
 mapper-on-file==0.0.2
 MarkupSafe==1.0
-nodejs-codegen==0.3.3
 nose==1.3.7
 pkginfo==1.4.2
 pycparser==2.19

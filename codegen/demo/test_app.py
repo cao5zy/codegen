@@ -22,7 +22,7 @@ def test_run():
     root = test_root()
     project_name = "test1"
     template_url = "git@github.com:cao5zy/nodejs_microservice_seneca_template.git"
-    template_tag = "v0.0.2"
+    template_tag = "v0.0.3"
     run(root, url, project_name, template_url, template_tag, username, password)
 
     assert_that(os.path.join(test_root(), ".template",  "nodejs_microservice_seneca_template")).exists()
@@ -38,7 +38,7 @@ def test_run():
 def test_run_data_str():
     root = test_root()
     template_url = "git@github.com:cao5zy/nodejs_microservice_seneca_template.git"
-    template_tag = "v0.0.2"
+    template_tag = "v0.0.3"
 
     run(root, "", "", template_url, template_tag, jsonstr = '''{ "deployConfig":{"instanceName": "test1"}}''')
 
@@ -48,7 +48,7 @@ def test_run_data_str():
 def test_run_data_file():
     root = test_root()
     template_url = "git@github.com:cao5zy/nodejs_microservice_seneca_template.git"
-    template_tag = "v0.0.2"
+    template_tag = "v0.0.3"
 
     run(root, "", "", template_url, template_tag, datafile = os.path.join(test_root(), "datafile"))
 
