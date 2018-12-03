@@ -12,7 +12,7 @@ pip install md_codegen
 
 # Usage
 ```
-codegen <host_url> --username=<username> --password=<password> --output=<output path> --project=test1 --template-repo=<template_git_repo> --template-tag=<template_git_repo_tag>
+codegen <host_url> --username=<username> --password=<password> --output=<output path> --project=test1 --template-repo=<template_git_repo> --template-tag=<template_git_repo_tag> --jsonstr=<jsonstr> --datafile=<datafile>
 ```
 * `host_url`: the url to download the *microservice definitions*. It would follow the pattern `http://<host>:<port>`.   
 * `u`: the username to access the account. If it is omitted, the program will prompt to input `username`.    
