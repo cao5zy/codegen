@@ -7,12 +7,15 @@ from code_engine import publish
 import demjson
 from deep_mapper import process_mapping
 
-def run(root, url, project_name, template_repo, template_tag, username = None, password = None, jsonstr = None, datafile = None):
+def run(root, url, project_name, template_repo, template_tag, username = None, password = None, jsonstr = None, datafile = None, template_path = None):
     def get_data():
         def get_from_data(data):
             return data if data and isinstance(data, list) else [data] if data else None
 
         def get_from_file():
+            if datafile and not os.path.exists(datafile):
+                raise ValueError("the data file is not existing. Please check %s" % datafile)
+            
             return get_from_data(demjson.decode_file(datafile) if datafile and os.path.exists(datafile) else None)
 
         return get_from_data(demjson.decode(jsonstr) if jsonstr else None) or get_from_file()
@@ -41,6 +44,6 @@ def run(root, url, project_name, template_repo, template_tag, username = None, p
     
     (lambda folder_path, template_path: \
      [gen_code(log(__name__)("app_data").debug(app_data),
-               put_folder(get_project_name(app_data, template_path), folder_path), template_path) for app_data in get_data() or getJson(url, project_name, username, password)])(put_folder(root), fetch_template())
+               put_folder(get_project_name(app_data, template_path), folder_path), template_path) for app_data in get_data() or getJson(url, project_name, username, password)])(put_folder(root), template_path or fetch_template())
 
 
