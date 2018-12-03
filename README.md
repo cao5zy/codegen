@@ -17,9 +17,14 @@ codegen <host_url> --username=<username> --password=<password> --output=<output 
 ```
 * `host_url`: the url to download the *microservice definitions*. It would follow the pattern `http://<host>:<port>`.   
 
-## Developing your templates with local data
+## Generating with local data
 ```
 codegen --output=<output path> --template-repo=<template_git_repo> --template-tag=<template_git_repo_tag> --datafile=<datafile>
+```
+
+## Developing templates
+```
+codegen --output=<output path> --template-path=<template-path> --datafile=<datafile>
 ```
 
 > If you want to update the interface defintion to your code, you should commit the changes in your local and make sure your local git repository is clean or the code generation will abort.
