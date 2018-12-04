@@ -1,7 +1,7 @@
 # Codegen
 
 # Description
-**codegen** is tool for generating code for [microservice accelerator](https://github.houston.entsvcs.net/zongying-cao/micro-service-accelerator).
+**codegen** is tool for generating code for [microservice accelerator](https://github.houston.entsvcs.net/zongying-cao/micro-service-accelerator). The generation engine is based on [Jinja2](https://github.com/pallets/jinja).
 It generates code with specified [templates](templates.md).  
 
 # Installation
