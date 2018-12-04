@@ -23,6 +23,7 @@ def test_run():
     project_name = "test1"
     template_url = "git@github.com:cao5zy/nodejs_microservice_seneca_template.git"
     template_tag = "v0.0.3"
+
     run(root, url, project_name, template_url, template_tag, username, password)
 
     assert_that(os.path.join(test_root(), ".template",  "nodejs_microservice_seneca_template")).exists()
