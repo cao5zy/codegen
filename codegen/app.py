@@ -9,17 +9,6 @@ from deep_mapper import process_mapping
 from .template_data import TemplateData
 
 def run(root, url, project_name, template_repo, template_tag, username = None, password = None, jsonstr = None, datafile = None, template_path = None):
-    def get_data():
-        def get_from_data(data):
-            return data if data and isinstance(data, list) else [data] if data else None
-
-        def get_from_file():
-            if datafile and not os.path.exists(datafile):
-                raise ValueError("the data file is not existing. Please check %s" % datafile)
-            
-            return get_from_data(demjson.decode_file(datafile) if datafile and os.path.exists(datafile) else None)
-
-        return get_from_data(demjson.decode(jsonstr) if jsonstr else None) or get_from_file()
 
     def fetch_template():
         return get_tag(template_repo, template_tag, log(__name__)("template_folder").debug(put_folder(".template", root)))
@@ -43,12 +32,10 @@ def run(root, url, project_name, template_repo, template_tag, username = None, p
             raise ValueError("the git is not configured or there is uncommitted changes in %s" % project_folder)
 
 
-    def get_default_data():
-        return [{"project_name": project_name}]
     
     (lambda folder_path, template_path, template_data: \
      [gen_code(log(__name__)("app_data").debug(app_data),
                log(__name__)("project_path").debug(put_folder(template_data.get_project_name(app_data, template_path), folder_path)),
-               log(__name__)("template_path").debug(template_path)) for app_data in get_data() or getJson(url, project_name, username, password) or get_default_data()])(put_folder(root), template_path or fetch_template(), TemplateData())
+               log(__name__)("template_path").debug(template_path)) for app_data in template_data.get_data(url, project_name, username, password, jsonstr, datafile)])(put_folder(root), template_path or fetch_template(), TemplateData())
 
 
