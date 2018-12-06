@@ -6,6 +6,7 @@ from fn import F
 from code_engine import publish
 import demjson
 from deep_mapper import process_mapping
+from .template_data import TemplateData
 
 def run(root, url, project_name, template_repo, template_tag, username = None, password = None, jsonstr = None, datafile = None, template_path = None):
     def get_data():
@@ -41,22 +42,13 @@ def run(root, url, project_name, template_repo, template_tag, username = None, p
         else:
             raise ValueError("the git is not configured or there is uncommitted changes in %s" % project_folder)
 
-    def get_project_name(jsonData, template_path):
-        def map_project_name(project_name_map_file):
-            if not os.path.exists(project_name_map_file):
-                raise ValueError("the map file is not available--%s" % project_name_map_file)
-
-            return process_mapping(jsonData, demjson.decode_file(project_name_map_file), "/")["project_name"]
-        
-        return jsonData["project_name"] if "project_name" in jsonData else map_project_name(os.path.join(template_path, ".mapper"))
-        
 
     def get_default_data():
         return [{"project_name": project_name}]
     
-    (lambda folder_path, template_path: \
+    (lambda folder_path, template_path, template_data: \
      [gen_code(log(__name__)("app_data").debug(app_data),
-               log(__name__)("project_path").debug(put_folder(get_project_name(app_data, template_path), folder_path)),
-               log(__name__)("template_path").debug(template_path)) for app_data in get_data() or getJson(url, project_name, username, password) or get_default_data()])(put_folder(root), template_path or fetch_template())
+               log(__name__)("project_path").debug(put_folder(template_data.get_project_name(app_data, template_path), folder_path)),
+               log(__name__)("template_path").debug(template_path)) for app_data in get_data() or getJson(url, project_name, username, password) or get_default_data()])(put_folder(root), template_path or fetch_template(), TemplateData())
 
 
