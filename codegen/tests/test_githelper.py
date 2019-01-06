@@ -40,5 +40,5 @@ def test_has_uncommit_false():
 
 @with_setup(setup_folder_with_no_git, remove_test_folder)
 def test_has_repo_false():
-    time.sleep(2)
+    time.sleep(3)
     assert_that(has_uncommit(os.path.join(test_root(), project_name))).is_true()
