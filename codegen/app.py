@@ -8,7 +8,7 @@ import demjson
 from deep_mapper import process_mapping
 from .template_data import TemplateData
 
-def run(root, url, project_name, template_repo, template_tag, username = None, password = None, jsonstr = None, datafile = None, template_path = None):
+def run(root, url, project_name, template_repo, template_tag, username = None, password = None, jsonstr = None, datafile = None, template_path = None, check_repo = True):
 
     def fetch_template():
         return get_tag(template_repo, template_tag, log(__name__)("template_folder").debug(put_folder(".template", root)))
@@ -26,7 +26,7 @@ def run(root, url, project_name, template_repo, template_tag, username = None, p
                 
                 
         
-        if len(os.listdir(project_folder)) == 0 or not has_uncommit(project_folder):
+        if (not check_repo) or len(os.listdir(project_folder)) == 0 or (not has_uncommit(project_folder)):
             gen_with_template(template_path)
         else:
             raise ValueError("the git is not configured or there is uncommitted changes in %s" % project_folder)
